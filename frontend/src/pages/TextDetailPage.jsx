@@ -419,6 +419,15 @@ function TextDetailPage() {
                 <div className="flex flex-wrap gap-2">
                   <span
                     className={`px-3 py-1 rounded text-xs font-medium ${
+                      edition.hasOriginal
+                        ? "bg-green-100 text-green-800"
+                        : "bg-gray-100 text-gray-600"
+                    }`}
+                  >
+                    {edition.hasOriginal ? "✓ Original" : "✗ No Original"}
+                  </span>
+                  <span
+                    className={`px-3 py-1 rounded text-xs font-medium ${
                       edition.hasCommentary
                         ? "bg-green-100 text-green-800"
                         : "bg-gray-100 text-gray-600"
