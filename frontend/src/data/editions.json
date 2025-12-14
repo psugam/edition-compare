@@ -1,0 +1,493 @@
+[
+  {
+    "editionId": "iliad-west-2019",
+    "textId": "homer-iliad",
+    "publishedDate": "2019",
+    "editors": ["Martin L. West"],
+    "manuscripts": ["Venetus A", "Venetus B", "Papyrus fragments"],
+    "hasOriginal": false,
+    "hasCommentary": true,
+    "translationLanguages": ["English"],
+    "reviews": [
+      {
+        "source": "Classical Review 2020",
+        "link": "https://example.com/review1"
+      },
+      {
+        "source": "Bryn Mawr Classical Review",
+        "link": "https://bmcr.brynmawr.edu"
+      }
+    ],
+    "publisher": "De Gruyter",
+    "publisherLink": "https://www.degruyter.com",
+    "publicDomain": false,
+    "pdfLink": null,
+    "isbn": "978-3-11-060633-1"
+  },
+  {
+    "editionId": "iliad-allen-1920",
+    "textId": "homer-iliad",
+    "publishedDate": "1920",
+    "editors": ["Thomas W. Allen"],
+    "manuscripts": ["Venetus A", "Harleianus 5674"],
+    "hasCommentary": false,
+    "hasOriginal": true,
+    "translationLanguages": [],
+    "reviews": [],
+    "publisher": "Oxford Classical Texts",
+    "publisherLink": "https://archive.org",
+    "publicDomain": true,
+    "pdfLink": "https://archive.org/details/iliad",
+    "isbn": null
+  },
+  {
+    "editionId": "iliad-murray-1924",
+    "textId": "homer-iliad",
+    "publishedDate": "1924",
+    "editors": ["A. T. Murray"],
+    "manuscripts": ["Various manuscripts"],
+    "hasCommentary": false,
+    "hasOriginal": true,
+    "translationLanguages": ["English"],
+    "reviews": [],
+    "publisher": "Loeb Classical Library",
+    "publisherLink": "https://www.loebclassics.com",
+    "publicDomain": true,
+    "pdfLink": "https://archive.org/details/loeb-iliad",
+    "isbn": null
+  },
+  {
+    "editionId": "odyssey-stanford-1959",
+    "textId": "homer-odyssey",
+    "publishedDate": "1959",
+    "editors": ["W. B. Stanford"],
+    "manuscripts": ["Laurentianus", "Vaticanus"],
+    "hasCommentary": true,
+    "translationLanguages": [],
+    "reviews": [
+      {
+        "source": "Phoenix, Vol. 14, No. 1 (1960)",
+        "link": null
+      }
+    ],
+    "publisher": "Macmillan",
+    "publisherLink": "https://www.macmillan.com",
+    "publicDomain": false,
+    "pdfLink": null,
+    "isbn": null
+  },
+  {
+    "editionId": "odyssey-allen-1917",
+    "textId": "homer-odyssey",
+    "publishedDate": "1917",
+    "editors": ["Thomas W. Allen"],
+    "manuscripts": ["Laurentianus", "Marcianus"],
+    "hasCommentary": false,
+    "translationLanguages": [],
+    "reviews": [],
+    "publisher": "Oxford Classical Texts",
+    "publisherLink": "https://global.oup.com",
+    "publicDomain": true,
+    "pdfLink": "https://archive.org/details/odyssey-allen",
+    "isbn": null
+  },
+  {
+    "editionId": "aeneid-conte-2013",
+    "textId": "virgil-aeneid",
+    "publishedDate": "2013",
+    "editors": ["Gian Biagio Conte"],
+    "manuscripts": ["Mediceus", "Palatinus", "Romanus"],
+    "hasCommentary": true,
+    "translationLanguages": [],
+    "reviews": [
+      {
+        "source": "Journal of Roman Studies 2014",
+        "link": "https://journals.cambridge.org"
+      }
+    ],
+    "publisher": "De Gruyter",
+    "publisherLink": "https://www.degruyter.com",
+    "publicDomain": false,
+    "pdfLink": null,
+    "isbn": "978-3-11-019822-6"
+  },
+  {
+    "editionId": "aeneid-mynors-1969",
+    "textId": "virgil-aeneid",
+    "publishedDate": "1969",
+    "editors": ["R. A. B. Mynors"],
+    "manuscripts": ["Mediceus", "Palatinus"],
+    "hasCommentary": false,
+    "translationLanguages": [],
+    "reviews": [],
+    "publisher": "Oxford Classical Texts",
+    "publisherLink": "https://global.oup.com",
+    "publicDomain": false,
+    "pdfLink": null,
+    "isbn": "978-0-19-814653-1"
+  },
+  {
+    "editionId": "aeneid-fairclough-1916",
+    "textId": "virgil-aeneid",
+    "publishedDate": "1916",
+    "editors": ["H. Rushton Fairclough"],
+    "manuscripts": ["Various manuscripts"],
+    "hasCommentary": false,
+    "translationLanguages": ["English"],
+    "reviews": [],
+    "publisher": "Loeb Classical Library",
+    "publisherLink": "https://www.loebclassics.com",
+    "publicDomain": true,
+    "pdfLink": "https://archive.org/details/loeb-aeneid",
+    "isbn": null
+  },
+  {
+    "editionId": "republic-burnet-1902",
+    "textId": "plato-republic",
+    "publishedDate": "1902",
+    "editors": ["John Burnet"],
+    "manuscripts": ["Parisinus graecus 1807"],
+    "hasCommentary": false,
+    "translationLanguages": [],
+    "reviews": [],
+    "publisher": "Oxford Classical Texts",
+    "publisherLink": "https://global.oup.com",
+    "publicDomain": true,
+    "pdfLink": "https://archive.org/details/plato-republic",
+    "isbn": null
+  },
+  {
+    "editionId": "republic-slings-2003",
+    "textId": "plato-republic",
+    "publishedDate": "2003",
+    "editors": ["S. R. Slings"],
+    "manuscripts": ["Parisinus graecus 1807", "Venetus append. class. 4, 1"],
+    "hasCommentary": true,
+    "translationLanguages": [],
+    "reviews": [
+      {
+        "source": "Classical Quarterly 2004",
+        "link": "https://journals.cambridge.org"
+      }
+    ],
+    "publisher": "Oxford Classical Texts",
+    "publisherLink": "https://global.oup.com",
+    "publicDomain": false,
+    "pdfLink": null,
+    "isbn": "978-0-19-924849-7"
+  },
+  {
+    "editionId": "poetics-kassel-1965",
+    "textId": "aristotle-poetics",
+    "publishedDate": "1965",
+    "editors": ["Rudolf Kassel"],
+    "manuscripts": ["Parisinus 1741", "Riccardianus 46"],
+    "hasCommentary": false,
+    "translationLanguages": [],
+    "reviews": [],
+    "publisher": "Oxford Classical Texts",
+    "publisherLink": "https://global.oup.com",
+    "publicDomain": false,
+    "pdfLink": null,
+    "isbn": null
+  },
+  {
+    "editionId": "bhagavad-gita-davis-2015",
+    "textId": "bhagavad-gita",
+    "publishedDate": "2015",
+    "editors": ["Richard H. Davis"],
+    "manuscripts": ["Kashmiri recension", "Southern recension"],
+    "hasCommentary": true,
+    "translationLanguages": ["English", "German"],
+    "reviews": [
+      {
+        "source": "Journal of Hindu Studies 2016",
+        "link": "https://academic.oup.com/jhs"
+      }
+    ],
+    "publisher": "Princeton University Press",
+    "publisherLink": "https://press.princeton.edu",
+    "publicDomain": false,
+    "pdfLink": null,
+    "isbn": "978-0-691-16444-1"
+  },
+  {
+    "editionId": "bhagavad-gita-arnold-1909",
+    "textId": "bhagavad-gita",
+    "publishedDate": "1909",
+    "editors": ["Edwin Arnold"],
+    "manuscripts": ["Critical edition"],
+    "hasCommentary": true,
+    "translationLanguages": ["English"],
+    "reviews": [],
+    "publisher": "Various",
+    "publisherLink": "https://www.gutenberg.org",
+    "publicDomain": true,
+    "pdfLink": "https://www.gutenberg.org/ebooks/42224",
+    "isbn": null
+  },
+  {
+    "editionId": "bhagavad-gita-van-buitenen-1981",
+    "textId": "bhagavad-gita",
+    "publishedDate": "1981",
+    "editors": ["J. A. B. van Buitenen"],
+    "manuscripts": ["Critical edition from Bhandarkar Institute"],
+    "hasCommentary": true,
+    "translationLanguages": ["English"],
+    "reviews": [
+      {
+        "source": "Journal of the American Oriental Society 1982",
+        "link": null
+      }
+    ],
+    "publisher": "University of Chicago Press",
+    "publisherLink": "https://press.uchicago.edu",
+    "publicDomain": false,
+    "pdfLink": null,
+    "isbn": "978-0-226-84663-7"
+  },
+  {
+    "editionId": "mahabharata-sukthankar-1933",
+    "textId": "mahabharata",
+    "publishedDate": "1933",
+    "editors": ["V. S. Sukthankar", "S. K. Belvalkar"],
+    "manuscripts": [
+      "Sharada manuscripts",
+      "Devanagari manuscripts",
+      "Southern manuscripts"
+    ],
+    "hasCommentary": true,
+    "translationLanguages": [],
+    "reviews": [],
+    "publisher": "Bhandarkar Oriental Research Institute",
+    "publisherLink": "https://www.bori.ac.in",
+    "publicDomain": true,
+    "pdfLink": "https://bombay.indology.info",
+    "isbn": null
+  },
+  {
+    "editionId": "rigveda-aufrecht-1877",
+    "textId": "rigveda",
+    "publishedDate": "1877",
+    "editors": ["Theodor Aufrecht"],
+    "manuscripts": ["Various manuscript traditions"],
+    "hasCommentary": false,
+    "translationLanguages": [],
+    "reviews": [],
+    "publisher": "F. A. Brockhaus",
+    "publisherLink": "https://archive.org",
+    "publicDomain": true,
+    "pdfLink": "https://archive.org/details/rigveda-aufrecht",
+    "isbn": null
+  },
+  {
+    "editionId": "rigveda-van-nooten-1994",
+    "textId": "rigveda",
+    "publishedDate": "1994",
+    "editors": ["Barend A. van Nooten", "Gary B. Holland"],
+    "manuscripts": ["Multiple manuscript traditions"],
+    "hasCommentary": false,
+    "translationLanguages": [],
+    "reviews": [
+      {
+        "source": "Indo-Iranian Journal 1996",
+        "link": null
+      }
+    ],
+    "publisher": "Harvard University Press",
+    "publisherLink": "https://www.hup.harvard.edu",
+    "publicDomain": false,
+    "pdfLink": null,
+    "isbn": "978-0-674-76247-2"
+  },
+  {
+    "editionId": "herodotus-hude-1927",
+    "textId": "herodotus-histories",
+    "publishedDate": "1927",
+    "editors": ["Carolus Hude"],
+    "manuscripts": ["Codex Florentinus", "Codex Romanus"],
+    "hasCommentary": false,
+    "translationLanguages": [],
+    "reviews": [],
+    "publisher": "Oxford Classical Texts",
+    "publisherLink": "https://global.oup.com",
+    "publicDomain": true,
+    "pdfLink": "https://archive.org/details/herodotus-hude",
+    "isbn": null
+  },
+  {
+    "editionId": "herodotus-godley-1920",
+    "textId": "herodotus-histories",
+    "publishedDate": "1920",
+    "editors": ["A. D. Godley"],
+    "manuscripts": ["Various manuscripts"],
+    "hasCommentary": false,
+    "translationLanguages": ["English"],
+    "reviews": [],
+    "publisher": "Loeb Classical Library",
+    "publisherLink": "https://www.loebclassics.com",
+    "publicDomain": true,
+    "pdfLink": "https://archive.org/details/loeb-herodotus",
+    "isbn": null
+  },
+  {
+    "editionId": "thucydides-jones-1942",
+    "textId": "thucydides-peloponnesian",
+    "publishedDate": "1942",
+    "editors": ["Henry Stuart Jones"],
+    "manuscripts": ["Codex Parisinus", "Codex Laurentianus"],
+    "hasCommentary": false,
+    "translationLanguages": [],
+    "reviews": [],
+    "publisher": "Oxford Classical Texts",
+    "publisherLink": "https://global.oup.com",
+    "publicDomain": true,
+    "pdfLink": "https://archive.org/details/thucydides-jones",
+    "isbn": null
+  },
+  {
+    "editionId": "ovid-tarrant-2004",
+    "textId": "ovid-metamorphoses",
+    "publishedDate": "2004",
+    "editors": ["R. J. Tarrant"],
+    "manuscripts": ["Marcianus", "Neapolitanus"],
+    "hasCommentary": true,
+    "translationLanguages": [],
+    "reviews": [
+      {
+        "source": "Classical Review 2005",
+        "link": "https://journals.cambridge.org"
+      }
+    ],
+    "publisher": "Oxford Classical Texts",
+    "publisherLink": "https://global.oup.com",
+    "publicDomain": false,
+    "pdfLink": null,
+    "isbn": "978-0-19-814666-1"
+  },
+  {
+    "editionId": "medea-page-1938",
+    "textId": "euripides-medea",
+    "publishedDate": "1938",
+    "editors": ["Denys Page"],
+    "manuscripts": ["Laurentianus", "Palatinus"],
+    "hasCommentary": true,
+    "translationLanguages": [],
+    "reviews": [],
+    "publisher": "Oxford University Press",
+    "publisherLink": "https://global.oup.com",
+    "publicDomain": true,
+    "pdfLink": "https://archive.org/details/medea-page",
+    "isbn": null
+  },
+  {
+    "editionId": "medea-diggle-1984",
+    "textId": "euripides-medea",
+    "publishedDate": "1984",
+    "editors": ["James Diggle"],
+    "manuscripts": ["Laurentianus", "Palatinus", "Vaticanus"],
+    "hasCommentary": false,
+    "translationLanguages": [],
+    "reviews": [],
+    "publisher": "Oxford Classical Texts",
+    "publisherLink": "https://global.oup.com",
+    "publicDomain": false,
+    "pdfLink": null,
+    "isbn": "978-0-19-814584-8"
+  },
+  {
+    "editionId": "shakuntala-kale-1898",
+    "textId": "kalidasa-shakuntala",
+    "publishedDate": "1898",
+    "editors": ["M. R. Kale"],
+    "manuscripts": ["Devanagari manuscripts", "Bengali recension"],
+    "hasCommentary": true,
+    "translationLanguages": ["English"],
+    "reviews": [],
+    "publisher": "Bookseller's Publishing Company",
+    "publisherLink": "https://archive.org",
+    "publicDomain": true,
+    "pdfLink": "https://archive.org/details/shakuntala-kale",
+    "isbn": null
+  },
+  {
+    "editionId": "shakuntala-devadhar-1962",
+    "textId": "kalidasa-shakuntala",
+    "publishedDate": "1962",
+    "editors": ["C. R. Devadhar"],
+    "manuscripts": ["Devanagari recension", "Bengali recension"],
+    "hasCommentary": true,
+    "translationLanguages": ["English"],
+    "reviews": [],
+    "publisher": "Motilal Banarsidass",
+    "publisherLink": "https://www.mlbd.com",
+    "publicDomain": false,
+    "pdfLink": null,
+    "isbn": null
+  },
+  {
+    "editionId": "oedipus-jebb-1887",
+    "textId": "sophocles-oedipus",
+    "publishedDate": "1887",
+    "editors": ["Richard Jebb"],
+    "manuscripts": ["Laurentianus"],
+    "hasCommentary": true,
+    "translationLanguages": ["English"],
+    "reviews": [],
+    "publisher": "Cambridge University Press",
+    "publisherLink": "https://www.cambridge.org",
+    "publicDomain": true,
+    "pdfLink": "https://archive.org/details/oedipus-jebb",
+    "isbn": null
+  },
+  {
+    "editionId": "oedipus-lloyd-jones-1994",
+    "textId": "sophocles-oedipus",
+    "publishedDate": "1994",
+    "editors": ["Hugh Lloyd-Jones", "N. G. Wilson"],
+    "manuscripts": ["Laurentianus", "Paris manuscripts"],
+    "hasCommentary": false,
+    "translationLanguages": [],
+    "reviews": [
+      {
+        "source": "Classical Quarterly 1995",
+        "link": "https://journals.cambridge.org"
+      }
+    ],
+    "publisher": "Oxford Classical Texts",
+    "publisherLink": "https://global.oup.com",
+    "publicDomain": false,
+    "pdfLink": null,
+    "isbn": "978-0-19-814590-9"
+  },
+  {
+    "editionId": "cicero-republic-ziegler-1969",
+    "textId": "cicero-republic",
+    "publishedDate": "1969",
+    "editors": ["Konrat Ziegler"],
+    "manuscripts": ["Vaticanus Palatinus 1513"],
+    "hasCommentary": false,
+    "translationLanguages": [],
+    "reviews": [],
+    "publisher": "Teubner",
+    "publisherLink": "https://www.degruyter.com",
+    "publicDomain": false,
+    "pdfLink": null,
+    "isbn": null
+  },
+  {
+    "editionId": "cicero-republic-keyes-1928",
+    "textId": "cicero-republic",
+    "publishedDate": "1928",
+    "editors": ["Clinton Walker Keyes"],
+    "manuscripts": ["Vaticanus Palatinus 1513"],
+    "hasCommentary": false,
+    "translationLanguages": ["English"],
+    "reviews": [],
+    "publisher": "Loeb Classical Library",
+    "publisherLink": "https://www.loebclassics.com",
+    "publicDomain": true,
+    "pdfLink": "https://archive.org/details/loeb-cicero-republic",
+    "isbn": null
+  }
+]

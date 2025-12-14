@@ -1,0 +1,126 @@
+[
+  {
+    "textId": "homer-iliad",
+    "title": "Iliad",
+    "titleOriginal": "Ἰλιάς",
+    "authors": ["Homer"],
+    "originalLanguage": "Ancient Greek",
+    "date": "8th century BCE",
+    "description": "The Iliad (/ˈɪliəd/; Ancient Greek: Ἰλιάς, romanized: Iliás)is one of two major ancient Greek epic poems attributed to Homer. It is one of the oldest extant works of literature still widely read by modern audiences. Like the Odyssey, the poem is divided into 24 books and was written in dactylic hexameter. It contains 15,693 lines in its most widely accepted version[clarification needed]. The Iliad is often regarded as the first substantial piece of European literature and is a central part of the Epic Cycle. The poem is set during the Trojan War, the ten-year siege of the city of Troy (Ilium) by a coalition of Greek states, and tells of the battles and events during the weeks of a quarrel between King Agamemnon and the warrior Achilles.",
+    "wikiLink": "https://en.wikipedia.org/wiki/Iliad"
+  },
+  {
+    "textId": "homer-odyssey",
+    "title": "Odyssey",
+    "titleOriginal": "Ὀδύσσεια",
+    "authors": ["Homer"],
+    "originalLanguage": "Ancient Greek",
+    "date": "8th century BCE",
+    "description": "The Odyssey (/ˈɒdəsi/; Greek: Ὀδύσσεια Odýsseia, pronounced [o.dýs.sej.a]) is one of two major ancient Greek epic poems attributed to Homer. It is, in part, a sequel to the Iliad, the other work ascribed to Homer. The poem is fundamental to the modern Western canon, and is the second-oldest extant work of Western literature, while the Iliad is the oldest. Scholars believe the Odyssey was composed near the end of the 8th century BC. The poem mainly focuses on the Greek hero Odysseus (known as Ulysses in Roman myths) and his journey home after the fall of Troy. It takes Odysseus ten years to reach Ithaca after the ten-year Trojan War. In his absence, it is assumed he has died, and his wife Penelope and son Telemachus must deal with a group of unruly suitors vying for Penelope's hand in marriage.",
+    "wikiLink": "https://en.wikipedia.org/wiki/Odyssey"
+  },
+  {
+    "textId": "virgil-aeneid",
+    "title": "Aeneid",
+    "titleOriginal": "Aeneis",
+    "authors": ["Virgil"],
+    "originalLanguage": "Latin",
+    "date": "29-19 BCE"
+  },
+  {
+    "textId": "plato-republic",
+    "title": "Republic",
+    "titleOriginal": "Πολιτεία",
+    "authors": ["Plato"],
+    "originalLanguage": "Ancient Greek",
+    "date": "380 BCE"
+  },
+  {
+    "textId": "aristotle-poetics",
+    "title": "Poetics",
+    "titleOriginal": "Περὶ ποιητικῆς",
+    "authors": ["Aristotle"],
+    "originalLanguage": "Ancient Greek",
+    "date": "335 BCE"
+  },
+  {
+    "textId": "sophocles-oedipus",
+    "title": "Oedipus Rex",
+    "titleOriginal": "Οἰδίπους Τύραννος",
+    "authors": ["Sophocles"],
+    "originalLanguage": "Ancient Greek",
+    "date": "429 BCE"
+  },
+  {
+    "textId": "cicero-republic",
+    "title": "De Re Publica",
+    "titleOriginal": "De Re Publica",
+    "authors": ["Cicero"],
+    "originalLanguage": "Latin",
+    "date": "54-51 BCE"
+  },
+  {
+    "textId": "bhagavad-gita",
+    "title": "Bhagavad Gita",
+    "titleOriginal": "भगवद्गीता",
+    "authors": ["Vyasa"],
+    "originalLanguage": "Sanskrit",
+    "date": "2nd century BCE - 2nd century CE"
+  },
+  {
+    "textId": "mahabharata",
+    "title": "Mahabharata",
+    "titleOriginal": "महाभारतम्",
+    "authors": ["Vyasa"],
+    "originalLanguage": "Sanskrit",
+    "date": "400 BCE - 400 CE"
+  },
+  {
+    "textId": "rigveda",
+    "title": "Rigveda",
+    "titleOriginal": "ऋग्वेद",
+    "authors": ["Various Rishis"],
+    "originalLanguage": "Vedic Sanskrit",
+    "date": "1500-1200 BCE"
+  },
+  {
+    "textId": "herodotus-histories",
+    "title": "Histories",
+    "titleOriginal": "Ἱστορίαι",
+    "authors": ["Herodotus"],
+    "originalLanguage": "Ancient Greek",
+    "date": "440 BCE"
+  },
+  {
+    "textId": "thucydides-peloponnesian",
+    "title": "History of the Peloponnesian War",
+    "titleOriginal": "Ἱστορία τοῦ Πελοποννησιακοῦ Πολέμου",
+    "authors": ["Thucydides"],
+    "originalLanguage": "Ancient Greek",
+    "date": "431 BCE"
+  },
+  {
+    "textId": "ovid-metamorphoses",
+    "title": "Metamorphoses",
+    "titleOriginal": "Metamorphōseōn librī",
+    "authors": ["Ovid"],
+    "originalLanguage": "Latin",
+    "date": "8 CE"
+  },
+  {
+    "textId": "euripides-medea",
+    "title": "Medea",
+    "titleOriginal": "Μήδεια",
+    "authors": ["Euripides"],
+    "originalLanguage": "Ancient Greek",
+    "date": "431 BCE"
+  },
+  {
+    "textId": "kalidasa-shakuntala",
+    "title": "Abhijñānaśākuntalam",
+    "titleOriginal": "अभिज्ञानशाकुन्तलम्",
+    "authors": ["Kalidasa"],
+    "originalLanguage": "Sanskrit",
+    "date": "4th-5th century CE"
+  }
+]
