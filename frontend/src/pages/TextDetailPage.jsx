@@ -19,6 +19,7 @@ function TextDetailPage() {
   const [filters, setFilters] = useState({
     hasOriginal: null,
     hasCommentary: null,
+    hasApparatus: null,
     translationLanguages: [],
     publicDomain: null,
     dateRange: [1400, 2025],
@@ -27,6 +28,7 @@ function TextDetailPage() {
     setFilters({
       hasOriginal: null,
       hasCommentary: null,
+      hasApparatus: null,
       translationLanguages: [],
       publicDomain: null,
       dateRange: [minYear, maxYear],
@@ -80,6 +82,12 @@ function TextDetailPage() {
       if (
         filters.hasCommentary !== null &&
         ed.hasCommentary !== filters.hasCommentary
+      ) {
+        return false;
+      }
+      if (
+        filters.hasApparatus !== null &&
+        ed.hasApparatus !== filters.hasApparatus
       ) {
         return false;
       }
@@ -260,6 +268,32 @@ function TextDetailPage() {
                 </select>
               </div>
 
+              {/* Critical Apparatus Filter */}
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Critical Apparatus
+                </label>
+                <select
+                  value={
+                    filters.hasApparatus === null ? "all" : filters.hasApparatus
+                  }
+                  onChange={(e) =>
+                    setFilters({
+                      ...filters,
+                      hasApparatus:
+                        e.target.value === "all"
+                          ? null
+                          : e.target.value === "true",
+                    })
+                  }
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                >
+                  <option value="all">All</option>
+                  <option value="true">With Apparatus</option>
+                  <option value="false">Without Apparatus</option>
+                </select>
+              </div>
+
               {/* Commentary Filter */}
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
@@ -412,6 +446,12 @@ function TextDetailPage() {
                     </div>
                   )}
                 </div>
+                <div>
+                  <div className="text-sm font-medium text-gray-700 mb-1">
+                    Remarks
+                  </div>
+                  <div className="text-gray-900">{edition.remarks}</div>
+                </div>
               </div>
 
               {/* Right Column */}
@@ -435,6 +475,17 @@ function TextDetailPage() {
                   >
                     {edition.hasCommentary ? "✓ Commentary" : "✗ No Commentary"}
                   </span>
+
+                  <span
+                    className={`px-3 py-1 rounded text-xs font-medium ${
+                      edition.hasApparatus
+                        ? "bg-green-100 text-green-800"
+                        : "bg-gray-100 text-gray-600"
+                    }`}
+                  >
+                    {edition.hasCommentary ? "✓ Apparatus" : "✗ No Apparatus"}
+                  </span>
+
                   <span
                     className={`px-3 py-1 rounded text-xs font-medium ${
                       edition.translationLanguages.length > 0
@@ -531,14 +582,7 @@ function TextDetailPage() {
               No editions match the selected filters
             </p>
             <button
-              onClick={() =>
-                setFilters({
-                  hasCommentary: null,
-                  translationLanguages: [],
-                  publicDomain: null,
-                  dateRange: [minYear, maxYear],
-                })
-              }
+              onClick={resetFilters}
               className="mt-4 text-blue-600 hover:text-blue-800 text-sm font-medium"
             >
               Clear all filters
