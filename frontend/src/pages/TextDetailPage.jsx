@@ -17,11 +17,21 @@ function TextDetailPage() {
   const text = textsData.find((t) => t.textId === textId);
 
   const [filters, setFilters] = useState({
+    hasOriginal: null,
     hasCommentary: null,
     translationLanguages: [],
     publicDomain: null,
     dateRange: [1400, 2025],
   });
+  const resetFilters = () => {
+    setFilters({
+      hasOriginal: null,
+      hasCommentary: null,
+      translationLanguages: [],
+      publicDomain: null,
+      dateRange: [minYear, maxYear],
+    });
+  };
 
   const [showFilters, setShowFilters] = useState(true);
   const [minYear, setMinYear] = useState(1400);
@@ -58,6 +68,14 @@ function TextDetailPage() {
 
   const filteredEditions = useMemo(() => {
     return editions.filter((ed) => {
+      // orignal text filter
+      if (
+        filters.hasOriginal !== null &&
+        ed.hasOriginal !== filters.hasOriginal
+      ) {
+        return false;
+      }
+
       // Commentary filter
       if (
         filters.hasCommentary !== null &&
@@ -333,6 +351,14 @@ function TextDetailPage() {
                 )}
               </div>
             )}
+            <div className="flex justify-end">
+              <button
+                onClick={resetFilters}
+                className="text-sm text-red-600 hover:text-red-800 font-medium"
+              >
+                Clear all filters
+              </button>
+            </div>
           </div>
         )}
       </div>
