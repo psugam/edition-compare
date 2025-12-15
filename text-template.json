@@ -1,6 +1,7 @@
 [
   {
     "textId": "homer-iliad",
+
     "title": "Iliad",
     "titleOriginal": "Ἰλιάς",
     "titleTransliteration": "Iliás",
@@ -13,6 +14,7 @@
     "originalLanguage": "Ancient Greek",
     "languageCode": "grc",
     "dialect": "Homeric Greek",
+
     "date": "8th century BCE",
     "dateNumeric": -750,
     "dateUncertainty": "high",

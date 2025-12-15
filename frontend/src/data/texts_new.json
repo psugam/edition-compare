@@ -1,0 +1,296 @@
+[
+  {
+    "textId": "homer-iliad",
+
+    "title": "Iliad",
+    "titleOriginal": "Ἰλιάς",
+    "titleTransliteration": "Iliás",
+    "alternativeTitles": ["The Song of Ilion", "The Wrath of Achilles"],
+
+    "authors": ["Homer"],
+    "authorsOriginal": ["Ὅμηρος"],
+    "attributedAuthors": [],
+
+    "originalLanguage": "Ancient Greek",
+    "languageCode": "grc",
+    "dialect": "Homeric Greek",
+
+    "date": "8th century BCE",
+    "dateNumeric": -750,
+    "dateUncertainty": "high",
+
+    "genre": "Epic Poetry",
+    "subgenre": ["Heroic Epic", "War Poetry"],
+    "literaryPeriod": "Archaic Period",
+
+    "structure": {
+      "books": 24,
+      "lines": 15693,
+      "verses": 15693,
+      "chapters": null,
+      "cantos": null
+    },
+    "meter": "Dactylic hexameter",
+
+    "description": "One of the two major ancient Greek epic poems attributed to Homer, recounting episodes of the Trojan War and the wrath of Achilles.",
+
+    "manuscriptTradition": {
+      "oldestManuscript": "Venetus A",
+      "oldestManuscriptDate": "10th century CE",
+      "numberOfManuscripts": "Approximately 1500 papyri and medieval manuscripts",
+      "textualTransmission": "Oral composition with later written stabilization"
+    },
+
+    "firstPrintedEdition": {
+      "year": 1488,
+      "location": "Florence",
+      "editor": "Demetrius Chalcondyles"
+    },
+
+    "relatedTexts": ["homer-odyssey"],
+    "partOfSeries": "Epic Cycle",
+
+    "wikiLink": "https://en.wikipedia.org/wiki/Iliad",
+    "externalLinks": [],
+
+    "tags": ["epic", "trojan-war", "homer", "ancient-greece"],
+    "verifiedByAdmin": true,
+    "dataQuality": "high"
+  },
+
+  {
+    "textId": "homer-odyssey",
+
+    "title": "Odyssey",
+    "titleOriginal": "Ὀδύσσεια",
+    "titleTransliteration": "Odýsseia",
+    "alternativeTitles": ["The Wanderings of Odysseus"],
+
+    "authors": ["Homer"],
+    "authorsOriginal": ["Ὅμηρος"],
+    "attributedAuthors": [],
+
+    "originalLanguage": "Ancient Greek",
+    "languageCode": "grc",
+    "dialect": "Homeric Greek",
+
+    "date": "8th century BCE",
+    "dateNumeric": -730,
+    "dateUncertainty": "high",
+
+    "genre": "Epic Poetry",
+    "subgenre": ["Heroic Epic", "Travel Narrative"],
+    "literaryPeriod": "Archaic Period",
+
+    "structure": {
+      "books": 24,
+      "lines": null,
+      "verses": null,
+      "chapters": null,
+      "cantos": null
+    },
+    "meter": "Dactylic hexameter",
+
+    "description": "Epic poem recounting the long journey of Odysseus as he attempts to return home after the Trojan War.",
+
+    "manuscriptTradition": {
+      "oldestManuscript": "Laurentianus",
+      "oldestManuscriptDate": "10th century CE",
+      "numberOfManuscripts": "Hundreds of medieval manuscripts",
+      "textualTransmission": "Oral tradition later fixed in written form"
+    },
+
+    "firstPrintedEdition": {
+      "year": 1488,
+      "location": "Florence",
+      "editor": "Demetrius Chalcondyles"
+    },
+
+    "relatedTexts": ["homer-iliad"],
+    "partOfSeries": "Epic Cycle",
+
+    "wikiLink": "https://en.wikipedia.org/wiki/Odyssey",
+    "externalLinks": [],
+
+    "tags": ["epic", "odysseus", "journey", "ancient-greece"],
+    "verifiedByAdmin": true,
+    "dataQuality": "high"
+  },
+
+  {
+    "textId": "virgil-aeneid",
+
+    "title": "Aeneid",
+    "titleOriginal": "Aeneis",
+    "titleTransliteration": "Aeneis",
+    "alternativeTitles": [],
+
+    "authors": ["Virgil"],
+    "authorsOriginal": ["Publius Vergilius Maro"],
+    "attributedAuthors": [],
+
+    "originalLanguage": "Latin",
+    "languageCode": "lat",
+    "dialect": "Classical Latin",
+
+    "date": "29–19 BCE",
+    "dateNumeric": -25,
+    "dateUncertainty": "medium",
+
+    "genre": "Epic Poetry",
+    "subgenre": ["National Epic"],
+    "literaryPeriod": "Augustan Age",
+
+    "structure": {
+      "books": 12,
+      "lines": null,
+      "verses": null,
+      "chapters": null,
+      "cantos": null
+    },
+    "meter": "Dactylic hexameter",
+
+    "description": "Latin epic narrating the journey of Aeneas from Troy to Italy and the mythical foundations of Rome.",
+
+    "manuscriptTradition": {
+      "oldestManuscript": "Vergilius Vaticanus",
+      "oldestManuscriptDate": "4th century CE",
+      "numberOfManuscripts": "Hundreds",
+      "textualTransmission": "Authorial poem preserved through late antique manuscripts"
+    },
+
+    "firstPrintedEdition": {
+      "year": 1469,
+      "location": "Rome",
+      "editor": "Sweynheym and Pannartz"
+    },
+
+    "relatedTexts": ["homer-iliad", "homer-odyssey"],
+    "partOfSeries": null,
+
+    "wikiLink": "https://en.wikipedia.org/wiki/Aeneid",
+    "externalLinks": [],
+
+    "tags": ["epic", "rome", "virgil"],
+    "verifiedByAdmin": true,
+    "dataQuality": "high"
+  },
+
+  {
+    "textId": "plato-republic",
+
+    "title": "Republic",
+    "titleOriginal": "Πολιτεία",
+    "titleTransliteration": "Politeía",
+    "alternativeTitles": ["On Justice"],
+
+    "authors": ["Plato"],
+    "authorsOriginal": ["Πλάτων"],
+    "attributedAuthors": [],
+
+    "originalLanguage": "Ancient Greek",
+    "languageCode": "grc",
+    "dialect": "Attic Greek",
+
+    "date": "380 BCE",
+    "dateNumeric": -380,
+    "dateUncertainty": "low",
+
+    "genre": "Philosophy",
+    "subgenre": ["Political Philosophy", "Ethics"],
+    "literaryPeriod": "Classical Period",
+
+    "structure": {
+      "books": 10,
+      "lines": null,
+      "verses": null,
+      "chapters": null,
+      "cantos": null
+    },
+    "meter": null,
+
+    "description": "Philosophical dialogue exploring justice, the ideal state, and the nature of the soul.",
+
+    "manuscriptTradition": {
+      "oldestManuscript": "Clarkianus 39",
+      "oldestManuscriptDate": "9th century CE",
+      "numberOfManuscripts": "Dozens",
+      "textualTransmission": "Continuous manuscript tradition"
+    },
+
+    "firstPrintedEdition": {
+      "year": 1513,
+      "location": "Venice",
+      "editor": "Aldus Manutius"
+    },
+
+    "relatedTexts": [],
+    "partOfSeries": null,
+
+    "wikiLink": "https://en.wikipedia.org/wiki/Republic_(Plato)",
+    "externalLinks": [],
+
+    "tags": ["philosophy", "politics", "plato"],
+    "verifiedByAdmin": true,
+    "dataQuality": "high"
+  },
+
+  {
+    "textId": "bhagavad-gita",
+
+    "title": "Bhagavad Gita",
+    "titleOriginal": "भगवद्गीता",
+    "titleTransliteration": "Bhagavadgītā",
+    "alternativeTitles": ["Song of the Lord"],
+
+    "authors": ["Vyasa"],
+    "authorsOriginal": ["व्यास"],
+    "attributedAuthors": [],
+
+    "originalLanguage": "Sanskrit",
+    "languageCode": "san",
+    "dialect": "Epic Sanskrit",
+
+    "date": "2nd century BCE – 2nd century CE",
+    "dateNumeric": 0,
+    "dateUncertainty": "high",
+
+    "genre": "Religious Philosophy",
+    "subgenre": ["Epic Poetry", "Didactic Dialogue"],
+    "literaryPeriod": "Classical Indian Period",
+
+    "structure": {
+      "books": 18,
+      "lines": 700,
+      "verses": 700,
+      "chapters": 18,
+      "cantos": null
+    },
+    "meter": "Various Sanskrit meters",
+
+    "description": "A sacred dialogue between Krishna and Arjuna forming part of the Mahabharata.",
+
+    "manuscriptTradition": {
+      "oldestManuscript": "Nepalese palm-leaf manuscripts",
+      "oldestManuscriptDate": "11th century CE",
+      "numberOfManuscripts": "Hundreds",
+      "textualTransmission": "Oral and manuscript tradition"
+    },
+
+    "firstPrintedEdition": {
+      "year": 1785,
+      "location": "Calcutta",
+      "editor": "Charles Wilkins"
+    },
+
+    "relatedTexts": ["mahabharata"],
+    "partOfSeries": "Mahabharata",
+
+    "wikiLink": "https://en.wikipedia.org/wiki/Bhagavad_Gita",
+    "externalLinks": [],
+
+    "tags": ["sanskrit", "hinduism", "philosophy"],
+    "verifiedByAdmin": true,
+    "dataQuality": "medium"
+  }
+]

@@ -8,6 +8,10 @@ import Header from "./components/Header";
 import Footer from "./components/Footer";
 import ContactPage from "./pages/ContactPage";
 
+// new pages
+import NewSearchPage from "./new_pages/SearchPage";
+import NewTextDetailPage from "./new_pages/TextDetailPage";
+
 function App() {
   return (
     <BrowserRouter>
@@ -19,6 +23,9 @@ function App() {
           <Route path="/search" element={<SearchPage />} />
           <Route path="/text/:textId" element={<TextDetailPage />} />
           <Route path="/contact" element={<ContactPage />} />
+          {/* new */}
+          <Route path="/new-search" element={<NewSearchPage />} />
+          <Route path="/new-text/:textId" element={<NewTextDetailPage />} />
         </Routes>
         <Footer />
       </div>

@@ -1,0 +1,168 @@
+[
+  {
+    "editionId": "iliad-west-2019",
+    "textId": "homer-iliad",
+
+    "editionTitle": "Iliad",
+    "editionSubtitle": null,
+
+    "seriesName": null,
+    "seriesNumber": null,
+    "volumeNumber": null,
+    "totalVolumes": 1,
+
+    "publishedDate": "2019",
+    "newEditionsDate": [],
+
+    "editors": ["Martin L. West"],
+    "translators": [],
+    "contributors": [],
+
+    "manuscripts": ["Venetus A", "Venetus B", "Papyrus fragments"],
+    "primaryManuscripts": [],
+
+    "hasOriginalText": false,
+    "hasTranslation": true,
+    "translationLanguages": ["English"],
+    "translationType": null,
+    "hasFacingTranslation": false,
+
+    "hasCommentary": true,
+    "commentaryType": null,
+    "commentaryLanguage": null,
+    "commentaryLength": null,
+
+    "hasApparatus": true,
+    "apparatusType": null,
+    "apparatusLocation": null,
+
+    "hasNotes": false,
+    "notesType": null,
+    "hasGlossary": false,
+    "hasIntroduction": false,
+    "hasBibliography": false,
+
+    "completeEdition": true,
+    "partsIncluded": null,
+
+    "pageCount": null,
+    "illustrations": false,
+    "maps": false,
+
+    "lineNumbering": false,
+    "lineNumberingInterval": null,
+    "paragraphNumbering": false,
+    "columnLayout": null,
+
+    "publisher": "De Gruyter",
+    "publisherLink": "https://www.degruyter.com",
+    "isbn": "978-3-11-060633-1",
+
+    "publicDomain": false,
+    "publicDomainResource": [],
+    "copyright": null,
+    "license": "All rights reserved",
+    "openAccess": false,
+    "inPrint": true,
+
+    "reviews": [
+      {
+        "source": "Classical Review 2020",
+        "reviewer": null,
+        "date": null,
+        "link": "https://example.com/review1"
+      },
+      {
+        "source": "Bryn Mawr Classical Review",
+        "reviewer": null,
+        "date": null,
+        "link": "https://bmcr.brynmawr.edu"
+      }
+    ],
+
+    "distinguishingFeatures": [],
+    "remarks": "lorem ipsum dolor sit amet lorem ipsum dolor sit amet lorem ipsum dolor sit amet lorem ipsum dolor sit amet lorem ipsum dolor sit amet lorem ipsum dolor sit amet lorem ipsum dolor sit amet lorem ipsum dolor sit amet lorem ipsum dolor sit amet lorem ipsum dolor sit amet lorem ipsum dolor sit amet lorem ipsum dolor sit amet lorem ipsum dolor sit amet lorem ipsum dolor sit amet lorem ipsum dolor sit amet lorem ipsum dolor sit amet lorem ipsum dolor sit amet lorem ipsum dolor sit amet lorem ipsum dolor sit amet lorem ipsum dolor sit amet lorem ipsum dolor sit amet lorem ipsum dolor sit amet lorem ipsum dolor sit amet lorem ipsum dolor sit amet lorem ipsum dolor sit amet lorem ipsum dolor sit amet lorem ipsum dolor sit amet lorem ipsum dolor sit amet lorem ipsum dolor sit amet lorem ipsum dolor sit amet.",
+
+    "verifiedByAdmin": false,
+    "dataQuality": "medium"
+  },
+
+  {
+    "editionId": "iliad-allen-1920",
+    "textId": "homer-iliad",
+
+    "editionTitle": "Iliad",
+    "editionSubtitle": null,
+
+    "seriesName": "Oxford Classical Texts",
+    "seriesNumber": null,
+    "volumeNumber": null,
+    "totalVolumes": 1,
+
+    "publishedDate": "1920",
+    "newEditionsDate": [],
+
+    "editors": ["Thomas W. Allen"],
+    "translators": [],
+    "contributors": [],
+
+    "manuscripts": ["Venetus A", "Harleianus 5674"],
+    "primaryManuscripts": [],
+
+    "hasOriginalText": true,
+    "hasTranslation": false,
+    "translationLanguages": [],
+    "translationType": null,
+    "hasFacingTranslation": false,
+
+    "hasCommentary": false,
+    "commentaryType": null,
+    "commentaryLanguage": null,
+    "commentaryLength": null,
+
+    "hasApparatus": false,
+    "apparatusType": null,
+    "apparatusLocation": null,
+
+    "hasNotes": false,
+    "notesType": null,
+    "hasGlossary": false,
+    "hasIntroduction": false,
+    "hasBibliography": false,
+
+    "completeEdition": true,
+    "partsIncluded": null,
+
+    "pageCount": null,
+    "illustrations": false,
+    "maps": false,
+
+    "lineNumbering": false,
+    "lineNumberingInterval": null,
+    "paragraphNumbering": false,
+    "columnLayout": null,
+
+    "publisher": "Oxford Classical Texts",
+    "publisherLink": "https://archive.org",
+    "isbn": null,
+
+    "publicDomain": true,
+    "publicDomainResource": [
+      {
+        "source": "Internet Archive",
+        "link": "https://archive.org/details/iliad"
+      }
+    ],
+    "copyright": null,
+    "license": "Public domain",
+    "openAccess": true,
+    "inPrint": false,
+
+    "reviews": [],
+    "distinguishingFeatures": [],
+    "remarks": "lorem ipsum dolor sit amet lorem ipsum dolor sit amet lorem ipsum dolor sit amet lorem ipsum dolor sit amet lorem ipsum dolor sit amet lorem ipsum dolor sit amet lorem ipsum dolor sit amet lorem ipsum dolor sit amet lorem ipsum dolor sit amet lorem ipsum dolor sit amet lorem ipsum dolor sit amet lorem ipsum dolor sit amet lorem ipsum dolor sit amet lorem ipsum dolor sit amet lorem ipsum dolor sit amet lorem ipsum dolor sit amet lorem ipsum dolor sit amet lorem ipsum dolor sit amet lorem ipsum dolor sit amet lorem ipsum dolor sit amet lorem ipsum dolor sit amet lorem ipsum dolor sit amet lorem ipsum dolor sit amet lorem ipsum dolor sit amet lorem ipsum dolor sit amet lorem ipsum dolor sit amet lorem ipsum dolor sit amet lorem ipsum dolor sit amet lorem ipsum dolor sit amet lorem ipsum dolor sit amet.",
+
+    "verifiedByAdmin": false,
+    "dataQuality": "medium"
+  }
+]

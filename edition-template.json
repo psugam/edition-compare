@@ -1,85 +1,99 @@
-{
-  "editionId": "iliad-west-2019",
-  "textId": "homer-iliad",
-  "editionTitle": "Iliad",
-  "editionSubtitle": "Homeric Epic",
-  "publishedDate": "2019",
-  "newEditionsDate": ["2020", "2022"],
-  "seriesName": "Bibliotheca Teubneriana",
-  "seriesNumber": "BT-1234",
-  "volumeNumber": null,
-  "totalVolumes": 1,
-  "editors": ["Martin L. West"],
-  "translators": ["Martin L. West"],
-  "contributors": [],
-  "manuscripts": ["Venetus A", "Venetus B", "Papyrus fragments"],
-  "primaryManuscripts": ["Venetus A"],
-  "hasOriginalText": false,
-  "hasTranslation": true,
-  "translationLanguages": ["English"],
-  "translationType": "prose",
-  "hasFacingTranslation": true,
-  "hasCommentary": true,
-  "commentaryType": "philological",
-  "commentaryLanguage": "English",
-  "commentaryLength": "extensive",
-  "hasApparatus": true,
-  "apparatusType": "critical",
-  "apparatusLocation": "bottom",
-  "hasNotes": true,
-  "notesType": "explanatory",
-  "hasGlossary": true,
-  "hasIntroduction": true,
-  "hasBibliography": true,
-  "completeEdition": true,
-  "partsIncluded": "Books I - III",
-  "pageCount": 650,
-  "illustrations": false,
-  "maps": true,
+[
+  {
+    "editionId": "iliad-west-2019",
+    "textId": "homer-iliad",
 
-  "lineNumbering": true,
-  "lineNumberingInterval": 5,
-  "paragraphNumbering": false,
-  "columnLayout": "single",
+    "editionTitle": "Iliad",
+    "editionSubtitle": "Homeric Epic",
 
-  "publisher": "De Gruyter",
-  "publisherLink": "https://www.degruyter.com",
-  "isbn": "978-3-11-060633-1",
+    "seriesName": "Bibliotheca Teubneriana",
+    "seriesNumber": "BT-1234",
+    "volumeNumber": null,
+    "totalVolumes": 1,
 
-  "publicDomain": false,
-  "publicDomainResource": [
-    {
-      "source": "Internet Archive",
-      "link": "https://archive.org/"
-    }
-  ],
-  "copyright": "© 2019 Walter de Gruyter GmbH",
-  "license": "All rights reserved",
-  "openAccess": false,
-  "inPrint": true,
+    "publishedDate": "2019",
+    "newEditionsDate": ["2020", "2022"],
 
-  "reviews": [
-    {
-      "source": "Classical Review 2020",
-      "reviewer": "Jane Smith",
-      "date": "2020-03-15",
-      "link": "https://example.com/review1"
-    },
-    {
-      "source": "Bryn Mawr Classical Review",
-      "reviewer": "John Doe",
-      "date": "2020-06-20",
-      "link": "https://bmcr.brynmawr.edu"
-    }
-  ],
-  "distinguishingFeatures": [
-    "Most comprehensive critical apparatus",
-    "Includes latest papyrus discoveries",
-    "Posthumous publication of West's work"
-  ],
+    "editors": ["Martin L. West"],
+    "translators": ["Martin L. West"],
+    "contributors": [],
 
-  "remarks": "This posthumous edition represents Martin West's final work on the Iliad, incorporating his lifetime of Homeric scholarship. The text includes significant new readings based on papyrus discoveries from the late 20th century. Particularly valuable for its comprehensive treatment of textual variants and manuscript tradition. Note: Some reviewers suggest the critical apparatus may be too detailed for undergraduate use.",
+    "manuscripts": ["Venetus A", "Venetus B", "Papyrus fragments"],
+    "primaryManuscripts": ["Venetus A"],
 
-  "verifiedByAdmin": true,
-  "dataQuality": "high"
-}
+    "hasOriginalText": false,
+    "hasTranslation": true,
+    "translationLanguages": ["English"],
+    "translationType": "prose",
+    "hasFacingTranslation": true,
+
+    "hasCommentary": true,
+    "commentaryType": "philological",
+    "commentaryLanguage": "English",
+    "commentaryLength": "extensive",
+
+    "hasApparatus": true,
+    "apparatusType": "critical",
+    "apparatusLocation": "bottom",
+
+    "hasNotes": true,
+    "notesType": "explanatory",
+    "hasGlossary": true,
+    "hasIntroduction": true,
+    "hasBibliography": true,
+
+    "completeEdition": true,
+    "partsIncluded": "Books I - III",
+
+    "pageCount": 650,
+    "illustrations": false,
+    "maps": true,
+
+    "lineNumbering": true,
+    "lineNumberingInterval": 5,
+    "paragraphNumbering": false,
+    "columnLayout": "single",
+
+    "publisher": "De Gruyter",
+    "publisherLink": "https://www.degruyter.com",
+    "isbn": "978-3-11-060633-1",
+
+    "publicDomain": false,
+    "publicDomainResource": [
+      {
+        "source": "Internet Archive",
+        "link": "https://archive.org/"
+      }
+    ],
+    "copyright": "© 2019 Walter de Gruyter GmbH",
+    "license": "All rights reserved",
+    "openAccess": false,
+    "inPrint": true,
+
+    "reviews": [
+      {
+        "source": "Classical Review 2020",
+        "reviewer": "Jane Smith",
+        "date": "2020-03-15",
+        "link": "https://example.com/review1"
+      },
+      {
+        "source": "Bryn Mawr Classical Review",
+        "reviewer": "John Doe",
+        "date": "2020-06-20",
+        "link": "https://bmcr.brynmawr.edu"
+      }
+    ],
+
+    "distinguishingFeatures": [
+      "Most comprehensive critical apparatus",
+      "Includes latest papyrus discoveries",
+      "Posthumous publication of West's work"
+    ],
+
+    "remarks": "This posthumous edition represents Martin West's final work on the Iliad, incorporating his lifetime of Homeric scholarship. The text includes significant new readings based on papyrus discoveries from the late 20th century. Particularly valuable for its comprehensive treatment of textual variants and manuscript tradition. Note: Some reviewers suggest the critical apparatus may be too detailed for undergraduate use.",
+
+    "verifiedByAdmin": true,
+    "dataQuality": "high"
+  }
+]
