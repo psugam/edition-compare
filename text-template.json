@@ -1,0 +1,77 @@
+[
+  {
+    "textId": "homer-iliad",
+    "title": "Iliad",
+    "titleOriginal": "Ἰλιάς",
+    "titleTransliteration": "Iliás",
+    "alternativeTitles": ["The Song of Ilion", "The Wrath of Achilles"],
+
+    "authors": ["Homer"],
+    "authorsOriginal": ["Ὅμηρος"],
+    "attributedAuthors": [],
+
+    "originalLanguage": "Ancient Greek",
+    "languageCode": "grc",
+    "dialect": "Homeric Greek",
+    "date": "8th century BCE",
+    "dateNumeric": -750,
+    "dateUncertainty": "high",
+
+    "genre": "Epic Poetry",
+    "subgenre": ["Heroic Epic", "War Poetry"],
+    "literaryPeriod": "Archaic Period",
+
+    "structure": {
+      "books": 24,
+      "lines": 15693,
+      "verses": 15693,
+      "chapters": null,
+      "cantos": null
+    },
+    "meter": "Dactylic hexameter",
+
+    "description": "The Iliad (/ˈɪliəd/; Ancient Greek: Ἰλιάς, romanized: Iliás) is one of two major ancient Greek epic poems attributed to Homer...",
+
+    "manuscriptTradition": {
+      "oldestManuscript": "Venetus A",
+      "oldestManuscriptDate": "10th century CE",
+      "numberOfManuscripts": "Approximately 1500 papyri and medieval manuscripts",
+      "textualTransmission": "Oral to written transition, standardized in Alexandria"
+    },
+
+    "firstPrintedEdition": {
+      "year": 1488,
+      "location": "Florence",
+      "editor": "Demetrius Chalcondyles"
+    },
+
+    "relatedTexts": ["homer-odyssey", "cyclic-epics"],
+    "partOfSeries": "Epic Cycle",
+
+    "wikiLink": "https://en.wikipedia.org/wiki/Iliad",
+    "externalLinks": [
+      {
+        "name": "Perseus Digital Library",
+        "url": "https://www.perseus.tufts.edu/hopper/text?doc=Perseus:text:1999.01.0133",
+        "type": "digital_text"
+      },
+      {
+        "name": "Homer Multitext Project",
+        "url": "http://www.homermultitext.org/",
+        "type": "research_project"
+      }
+    ],
+
+    "tags": [
+      "epic",
+      "war",
+      "mythology",
+      "ancient-greece",
+      "homer",
+      "trojan-war"
+    ],
+
+    "verifiedByAdmin": true,
+    "dataQuality": "high"
+  }
+]

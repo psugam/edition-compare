@@ -52,6 +52,16 @@ function Header() {
             >
               About
             </Link>
+            <Link
+              to="/contact"
+              className={`text-sm ${
+                location.pathname === "/contact"
+                  ? "text-blue-600 font-medium"
+                  : "text-gray-600 hover:text-gray-900"
+              }`}
+            >
+              Contact
+            </Link>
           </nav>
 
           {/* Mobile hamburger */}

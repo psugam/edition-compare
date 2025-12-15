@@ -6,6 +6,7 @@ import SearchPage from "./pages/SearchPage";
 import TextDetailPage from "./pages/TextDetailPage";
 import Header from "./components/Header";
 import Footer from "./components/Footer";
+import ContactPage from "./pages/ContactPage";
 
 function App() {
   return (
@@ -17,6 +18,7 @@ function App() {
           <Route path="/about" element={<About />} />
           <Route path="/search" element={<SearchPage />} />
           <Route path="/text/:textId" element={<TextDetailPage />} />
+          <Route path="/contact" element={<ContactPage />} />
         </Routes>
         <Footer />
       </div>

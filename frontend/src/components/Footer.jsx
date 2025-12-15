@@ -60,7 +60,7 @@ function Footer() {
               </li>
               <li>
                 <a
-                  href="#"
+                  href="/contact"
                   className="text-sm text-gray-600 hover:text-blue-600 transition-colors"
                 >
                   Contact
