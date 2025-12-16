@@ -1,56 +1,169 @@
 // ============================================
 // FILE: src/pages/SearchPage.jsx
 // ============================================
-import React, { useState, useMemo } from "react";
+import React, { useState, useMemo, useEffect } from "react";
 import { Link } from "react-router-dom";
-import { Search, BookOpen, ChevronLeft, ChevronRight } from "lucide-react";
+import {
+  Search,
+  BookOpen,
+  ChevronLeft,
+  ChevronRight,
+  Filter,
+  RefreshCw,
+  Feather,
+  LayoutGrid,
+  Zap,
+  Calendar,
+} from "lucide-react";
 
 import textsData from "../data/texts_new.json";
 
 function SearchPage() {
   const [searchTerm, setSearchTerm] = useState("");
-  const [languageFilter, setLanguageFilter] = useState("all");
   const [currentPage, setCurrentPage] = useState(1);
+
+  // Filter States
+  const [languageFilter, setLanguageFilter] = useState("all");
+  const [genreFilter, setGenreFilter] = useState("all");
+  const [dataQualityFilter, setDataQualityFilter] = useState("all"); // New Filter
+  const [minDateFilter, setMinDateFilter] = useState(null);
+  const [maxDateFilter, setMaxDateFilter] = useState(null);
 
   const ITEMS_PER_PAGE = 9;
 
   /* ------------------------------------------
-   * Derived data
+   * Derived data and Filter Options
    * ----------------------------------------*/
 
-  const languages = useMemo(() => {
-    return ["all", ...new Set(textsData.map((t) => t.originalLanguage))];
-  }, []);
-
   const sortedTexts = useMemo(() => {
+    // Sort once on load
     return [...textsData].sort((a, b) => a.title.localeCompare(b.title));
   }, []);
+
+  // Calculate unique filter options
+  const languageOptions = useMemo(() => {
+    return [...new Set(textsData.map((t) => t.originalLanguage))].sort();
+  }, []);
+
+  const genreOptions = useMemo(() => {
+    return [...new Set(textsData.map((t) => t.genre).filter(Boolean))].sort();
+  }, []);
+
+  const dataQualityOptions = useMemo(() => {
+    return [
+      ...new Set(textsData.map((t) => t.dataQuality).filter(Boolean)),
+    ].sort();
+  }, []);
+
+  const dateRange = useMemo(() => {
+    const dates = textsData
+      .map((t) => t.dateNumeric)
+      .filter((d) => typeof d === "number");
+    if (dates.length === 0) return { min: null, max: null };
+    return { min: Math.min(...dates), max: Math.max(...dates) };
+  }, []);
+
+  // Set initial date filter bounds based on data
+  useEffect(() => {
+    if (dateRange.min !== null) {
+      setMinDateFilter(dateRange.min);
+    }
+    if (dateRange.max !== null) {
+      setMaxDateFilter(dateRange.max);
+    }
+  }, [dateRange]);
+
+  /* ------------------------------------------
+   * Reset Feature
+   * ----------------------------------------*/
+  const resetFilters = () => {
+    setSearchTerm("");
+    setLanguageFilter("all");
+    setGenreFilter("all");
+    setDataQualityFilter("all");
+    setMinDateFilter(dateRange.min);
+    setMaxDateFilter(dateRange.max);
+    setCurrentPage(1); // Important: Reset pagination after state update
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  };
+
+  /* ------------------------------------------
+   * Filtering Logic
+   * ----------------------------------------*/
 
   const filteredTexts = useMemo(() => {
     const q = searchTerm.toLowerCase();
 
     const filtered = sortedTexts.filter((text) => {
+      // 1. Text Search
       const matchesSearch =
         text.title.toLowerCase().includes(q) ||
         text.titleOriginal.toLowerCase().includes(q) ||
         (text.titleTransliteration &&
           text.titleTransliteration.toLowerCase().includes(q)) ||
-        text.authors.some((a) => a.toLowerCase().includes(q)) ||
+        text.authors.some((a) => a.toLowerCase().includes(q)) || // Still search authors
         (text.genre && text.genre.toLowerCase().includes(q)) ||
-        (text.literaryPeriod && text.literaryPeriod.toLowerCase().includes(q));
+        (text.literaryPeriod && text.literaryPeriod.toLowerCase().includes(q)); // Still search period
 
-      const matchesLanguage =
-        languageFilter === "all" || text.originalLanguage === languageFilter;
+      if (!matchesSearch) return false;
 
-      return matchesSearch && matchesLanguage;
+      // 2. Language Filter
+      if (languageFilter !== "all" && text.originalLanguage !== languageFilter)
+        return false;
+
+      // 3. Genre Filter
+      if (genreFilter !== "all" && text.genre !== genreFilter) return false;
+
+      // 4. Data Quality Filter
+      if (dataQualityFilter !== "all" && text.dataQuality !== dataQualityFilter)
+        return false;
+
+      // 5. Date Range Filter (using dateNumeric)
+      const currentMin = minDateFilter === null ? dateRange.min : minDateFilter;
+      const currentMax = maxDateFilter === null ? dateRange.max : maxDateFilter;
+
+      if (
+        typeof text.dateNumeric === "number" &&
+        currentMin !== null &&
+        currentMax !== null
+      ) {
+        if (text.dateNumeric < currentMin || text.dateNumeric > currentMax)
+          return false;
+      }
+
+      return true;
     });
 
-    setCurrentPage(1);
+    // Reset to page 1 upon filtering change
+    // Note: The dependency array should handle the state update triggering this useMemo.
+    // setCurrentPage(1) moved out of here and handled via the reset function
     return filtered;
-  }, [searchTerm, languageFilter, sortedTexts]);
+  }, [
+    searchTerm,
+    languageFilter,
+    genreFilter,
+    dataQualityFilter,
+    minDateFilter,
+    maxDateFilter,
+    sortedTexts,
+    dateRange,
+  ]);
+
+  // Effect to reset page to 1 whenever filters change, except when date filters are being set initially
+  // Use state variables (and not the computed filterTexts) as dependencies
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [
+    searchTerm,
+    languageFilter,
+    genreFilter,
+    dataQualityFilter,
+    minDateFilter,
+    maxDateFilter,
+  ]);
 
   /* ------------------------------------------
-   * Pagination
+   * Pagination Logic (RETAINED)
    * ----------------------------------------*/
 
   const totalPages = Math.ceil(filteredTexts.length / ITEMS_PER_PAGE);
@@ -72,131 +185,297 @@ function SearchPage() {
     } else {
       pages.push(1);
       if (currentPage > 3) pages.push("...");
+
       for (
         let i = Math.max(2, currentPage - 1);
         i <= Math.min(totalPages - 1, currentPage + 1);
         i++
       ) {
-        pages.push(i);
+        if (i !== 1 && i !== totalPages) {
+          pages.push(i);
+        }
       }
+
       if (currentPage < totalPages - 2) pages.push("...");
-      pages.push(totalPages);
+
+      if (totalPages > 1) {
+        if (pages[pages.length - 1] !== totalPages) {
+          pages.push(totalPages);
+        }
+      }
     }
-    return pages;
+    return pages.filter((p, i, self) => i === 0 || p !== self[i - 1]);
   };
 
   /* ------------------------------------------
-   * Render
+   * Render Components
+   * ----------------------------------------*/
+
+  const FilterSelect = ({ label, icon, value, onChange, options }) => (
+    <div>
+      <label className="flex items-center gap-2 text-sm font-semibold text-gray-700 mb-2">
+        {icon}
+        {label}
+      </label>
+      <select
+        value={value}
+        onChange={(e) => onChange(e.target.value)}
+        className="w-full border border-gray-300 rounded-lg px-4 py-2 text-sm focus:ring-indigo-500 focus:border-indigo-500 transition duration-150 ease-in-out appearance-none"
+      >
+        <option value="all">All {label.toLowerCase()}</option>
+        {options.map((option) => (
+          <option key={option} value={option}>
+            {option.charAt(0).toUpperCase() + option.slice(1)}
+          </option>
+        ))}
+      </select>
+    </div>
+  );
+
+  const DateInput = ({ label, value, onChange, min, max }) => (
+    <div>
+      <label className="block text-xs font-medium text-gray-500 mb-1">
+        {label}
+      </label>
+      <input
+        type="number"
+        min={dateRange.min}
+        max={dateRange.max}
+        value={value === null ? "" : value}
+        onChange={(e) => {
+          const numValue = parseInt(e.target.value);
+          if (e.target.value === "") {
+            onChange(null);
+          } else if (!isNaN(numValue)) {
+            onChange(numValue);
+          }
+        }}
+        className="w-full border border-gray-300 rounded-lg px-3 py-1.5 text-sm focus:ring-indigo-500 focus:border-indigo-500"
+        placeholder={label}
+      />
+    </div>
+  );
+
+  /* ------------------------------------------
+   * Main Render
    * ----------------------------------------*/
 
   return (
-    <div className="max-w-6xl mx-auto px-4 py-8">
-      <h1 className="text-3xl font-serif mb-6">Search Classical Texts</h1>
+    <div className="max-w-7xl mx-auto px-4 py-10 font-sans">
+      <h1 className="text-4xl font-serif text-gray-900 mb-8 font-bold">
+        Classical Texts Search
+      </h1>
 
-      {/* Search / Filter */}
-      <div className="bg-white border rounded-lg p-6 mb-6">
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <div>
-            <label className="block text-sm font-medium mb-2">Search</label>
+      {/* Search / Filter Section - Sleek Card */}
+      <div className="bg-white border border-gray-200 rounded-xl p-6 mb-8 shadow-lg">
+        {/* Search Bar and Reset */}
+        <div className="flex justify-between items-end mb-6 pb-6 border-b border-gray-200">
+          <div className="flex-1 mr-4">
+            <label className="block text-sm font-semibold text-gray-700 mb-2">
+              Search by Title, Author, or Keyword
+            </label>
             <div className="relative">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
+              <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-indigo-400" />
               <input
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                className="pl-10 w-full border rounded px-3 py-2"
-                placeholder="Iliad, Politeía, Epic, Archaic…"
+                className="pl-12 w-full border border-gray-300 rounded-lg px-4 py-3 text-base focus:ring-indigo-500 focus:border-indigo-500 transition duration-150"
+                placeholder="e.g., Iliad, Plato, Epic, Roman History..."
               />
             </div>
           </div>
 
-          <div>
-            <label className="block text-sm font-medium mb-2">Language</label>
-            <select
-              value={languageFilter}
-              onChange={(e) => setLanguageFilter(e.target.value)}
-              className="w-full border rounded px-3 py-2"
-            >
-              {languages.map((l) => (
-                <option key={l} value={l}>
-                  {l === "all" ? "All languages" : l}
-                </option>
-              ))}
-            </select>
+          {/* Reset Button */}
+          <button
+            onClick={resetFilters}
+            className="flex items-center space-x-2 px-4 py-3 bg-red-500 text-white rounded-lg text-sm font-medium hover:bg-red-600 transition duration-150 shadow-md"
+          >
+            <RefreshCw className="w-4 h-4" />
+            <span>Reset Filters</span>
+          </button>
+        </div>
+
+        {/* Filters Grid */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+          {/* Language Filter */}
+          <FilterSelect
+            label="Original Language"
+            icon={<Feather className="w-4 h-4 text-indigo-500" />}
+            value={languageFilter}
+            onChange={setLanguageFilter}
+            options={languageOptions}
+          />
+
+          {/* Genre Filter */}
+          <FilterSelect
+            label="Genre"
+            icon={<LayoutGrid className="w-4 h-4 text-indigo-500" />}
+            value={genreFilter}
+            onChange={setGenreFilter}
+            options={genreOptions}
+          />
+
+          {/* Data Quality Filter (NEW) */}
+          <FilterSelect
+            label="Data Quality"
+            icon={<Zap className="w-4 h-4 text-indigo-500" />}
+            value={dataQualityFilter}
+            onChange={setDataQualityFilter}
+            options={dataQualityOptions}
+          />
+
+          {/* Date Range Filter (Numeric Date) */}
+          <div className="col-span-1">
+            <label className="flex items-center gap-2 text-sm font-semibold text-gray-700 mb-2">
+              <Calendar className="w-4 h-4 text-indigo-500" />
+              Date Range (Approx. Year BCE/CE)
+            </label>
+            <div className="flex items-center space-x-2">
+              <DateInput
+                label={`Min (${dateRange.min || "N/A"})`}
+                value={minDateFilter}
+                onChange={setMinDateFilter}
+              />
+              <span className="text-gray-500 text-lg">→</span>
+              <DateInput
+                label={`Max (${dateRange.max || "N/A"})`}
+                value={maxDateFilter}
+                onChange={setMaxDateFilter}
+              />
+            </div>
           </div>
         </div>
       </div>
 
-      {/* Results */}
+      {/* Results Section */}
+      <h2 className="text-2xl font-serif text-gray-800 mb-6">
+        {filteredTexts.length} {filteredTexts.length === 1 ? "Text" : "Texts"}{" "}
+        Found
+      </h2>
+
       {paginatedTexts.length > 0 ? (
         <>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {paginatedTexts.map((text) => (
               <Link
                 key={text.textId}
                 to={`/new-text/${text.textId}`}
-                className="bg-white border rounded-lg p-5 hover:shadow transition"
+                className="bg-white border border-gray-200 rounded-xl p-6 shadow-md hover:shadow-lg transition duration-300 transform hover:scale-[1.01] flex flex-col justify-between"
               >
-                <BookOpen className="w-5 h-5 text-gray-400 mb-2" />
+                <div>
+                  <BookOpen className="w-6 h-6 text-indigo-500 mb-3" />
 
-                <h3 className="font-semibold text-gray-900">{text.title}</h3>
+                  <h3 className="text-xl font-semibold text-gray-900 mb-1 font-serif">
+                    {text.title}
+                  </h3>
 
-                <p className="text-sm text-gray-600">
-                  {text.titleOriginal}
-                  {text.titleTransliteration && (
-                    <span className="italic text-gray-500">
-                      {" · "}
-                      {text.titleTransliteration}
-                    </span>
+                  <p className="text-sm text-gray-600 italic mb-3">
+                    {text.titleOriginal}
+                    {text.titleTransliteration && (
+                      <span className="text-gray-400 ml-2">
+                        {" | "}
+                        {text.titleTransliteration}
+                      </span>
+                    )}
+                  </p>
+
+                  {/* Key Details */}
+                  <div className="space-y-1 text-sm text-gray-700 mb-3">
+                    <div className="flex items-center gap-2">
+                      <Feather className="w-4 h-4 text-gray-500 flex-shrink-0" />
+                      <span className="truncate">{text.originalLanguage}</span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <LayoutGrid className="w-4 h-4 text-gray-500 flex-shrink-0" />
+                      <span className="truncate">
+                        {text.genre}
+                        {text.literaryPeriod && ` · ${text.literaryPeriod}`}
+                      </span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <Calendar className="w-4 h-4 text-gray-500 flex-shrink-0" />
+                      <span className="truncate">Approx. {text.date}</span>
+                    </div>
+                  </div>
+
+                  {/* Truncated Description */}
+                  {text.description && (
+                    <p className="text-xs text-gray-500 mt-2 line-clamp-3 leading-snug">
+                      {text.description}
+                    </p>
                   )}
-                </p>
-
-                <div className="mt-2 text-sm text-gray-700">
-                  {text.authors.join(", ")}
                 </div>
 
-                <div className="mt-2 text-xs text-gray-500">
-                  {text.genre}
-                  {text.literaryPeriod && ` · ${text.literaryPeriod}`}
-                </div>
-
-                <div className="mt-2 text-xs text-gray-500 flex justify-between">
-                  <span>
-                    {text.originalLanguage} ({text.languageCode})
+                <div className="mt-4 pt-3 border-t border-gray-100 flex justify-between items-center text-sm">
+                  <span
+                    className={`px-2 py-0.5 rounded-full text-xs font-semibold ${
+                      text.dataQuality === "high"
+                        ? "bg-green-100 text-green-700"
+                        : text.dataQuality === "medium"
+                        ? "bg-yellow-100 text-yellow-700"
+                        : "bg-red-100 text-red-700"
+                    }`}
+                  >
+                    Quality: {text.dataQuality}
                   </span>
-                  {text.date && <span>~{text.date}</span>}
+                  <span className="text-indigo-600 font-medium hover:text-indigo-800 transition duration-150">
+                    View Details →
+                  </span>
                 </div>
               </Link>
             ))}
           </div>
 
-          {/* Pagination */}
+          {/* Pagination (RETAINED) */}
           {totalPages > 1 && (
-            <div className="flex justify-center gap-2 mt-8">
+            <div className="flex justify-center gap-1 mt-10">
+              <button
+                onClick={() => goToPage(currentPage - 1)}
+                disabled={currentPage === 1}
+                className="px-3 py-2 rounded-lg text-sm text-gray-700 bg-white border border-gray-300 hover:bg-gray-100 disabled:opacity-50 disabled:cursor-not-allowed transition"
+              >
+                <ChevronLeft className="w-4 h-4" />
+              </button>
+
               {getPageNumbers().map((p, i) =>
                 p === "..." ? (
-                  <span key={i} className="px-2">
+                  <span key={i} className="px-3 py-2 text-sm text-gray-500">
                     …
                   </span>
                 ) : (
                   <button
                     key={i}
                     onClick={() => goToPage(p)}
-                    className={`px-3 py-1 rounded text-sm ${
+                    className={`px-4 py-2 rounded-lg text-sm font-medium transition ${
                       p === currentPage
-                        ? "bg-blue-600 text-white"
-                        : "bg-gray-100 hover:bg-gray-200"
+                        ? "bg-indigo-600 text-white shadow-md hover:bg-indigo-700"
+                        : "bg-gray-100 text-gray-700 hover:bg-gray-200"
                     }`}
                   >
                     {p}
                   </button>
                 )
               )}
+
+              <button
+                onClick={() => goToPage(currentPage + 1)}
+                disabled={currentPage === totalPages}
+                className="px-3 py-2 rounded-lg text-sm text-gray-700 bg-white border border-gray-300 hover:bg-gray-100 disabled:opacity-50 disabled:cursor-not-allowed transition"
+              >
+                <ChevronRight className="w-4 h-4" />
+              </button>
             </div>
           )}
         </>
       ) : (
-        <div className="bg-white border rounded-lg p-12 text-center">
-          <p className="text-gray-600">No texts match your search</p>
+        <div className="bg-white border border-gray-200 rounded-xl p-12 text-center shadow-md">
+          <Search className="w-8 h-8 mx-auto mb-3 text-gray-400" />
+          <p className="text-xl font-medium text-gray-700">
+            No texts found matching your current filters.
+          </p>
+          <p className="text-gray-500 mt-2">
+            Try adjusting your search term or filters.
+          </p>
         </div>
       )}
     </div>
