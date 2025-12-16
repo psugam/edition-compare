@@ -1,3 +1,6 @@
+// ============================================
+// FILE: src/pages/TextDetailPage.jsx
+// ============================================
 import React, { useState, useMemo, useEffect } from "react";
 import { useParams, Link } from "react-router-dom";
 import {
@@ -8,582 +11,886 @@ import {
   Globe,
   ExternalLink,
   Filter,
+  Book,
+  Award,
+  Check,
+  X,
+  ChevronDown,
+  ChevronUp,
+  SlidersHorizontal,
 } from "lucide-react";
-import textsData from "../data/texts.json";
-import editionsData from "../data/editions.json";
+
+import textsData from "../data/texts_new.json";
+import editionsData from "../data/editions_new.json";
+
+// --- Helper Components for Filters ---
+
+// A sleek custom multi-select component (simple version)
+const MultiSelectFilter = ({ label, options, selected, onChange }) => {
+  const isSelected = (option) => selected.includes(option);
+
+  const toggleOption = (option) => {
+    if (isSelected(option)) {
+      onChange(selected.filter((item) => item !== option));
+    } else {
+      onChange([...selected, option]);
+    }
+  };
+
+  return (
+    <div>
+      <label className="block text-sm font-semibold text-gray-700 mb-2">
+        {label}
+      </label>
+      <div className="flex flex-wrap gap-2">
+        {options.map((option) => (
+          <button
+            key={option}
+            onClick={() => toggleOption(option)}
+            className={`px-3 py-1 text-xs rounded-full border transition-colors ${
+              isSelected(option)
+                ? "bg-indigo-600 text-white border-indigo-600 hover:bg-indigo-700"
+                : "bg-white text-gray-700 border-gray-300 hover:bg-gray-50"
+            }`}
+          >
+            {option}
+          </button>
+        ))}
+        {options.length === 0 && (
+          <span className="text-sm text-gray-500 italic">N/A</span>
+        )}
+      </div>
+    </div>
+  );
+};
+
+// A sleek select component for boolean filters
+const FilterSelect = ({ label, value, onChange }) => {
+  return (
+    <div>
+      <label className="block text-sm font-semibold text-gray-700 mb-2">
+        {label}
+      </label>
+      <select
+        className="w-full border border-gray-300 rounded-lg px-4 py-2 text-sm focus:ring-indigo-500 focus:border-indigo-500 transition duration-150 ease-in-out"
+        value={value === null ? "" : value.toString()}
+        onChange={(e) =>
+          onChange(e.target.value === "" ? null : e.target.value === "true")
+        }
+      >
+        <option value="">Any</option>
+        <option value="true">Yes</option>
+        <option value="false">No</option>
+      </select>
+    </div>
+  );
+};
+
+// --- Main Component ---
 
 function TextDetailPage() {
   const { textId } = useParams();
   const text = textsData.find((t) => t.textId === textId);
 
-  const [filters, setFilters] = useState({
-    hasOriginal: null,
-    hasCommentary: null,
-    hasApparatus: null,
-    translationLanguages: [],
-    publicDomain: null,
-    dateRange: [1400, 2025],
-  });
-  const resetFilters = () => {
-    setFilters({
-      hasOriginal: null,
-      hasCommentary: null,
-      hasApparatus: null,
-      translationLanguages: [],
-      publicDomain: null,
-      dateRange: [minYear, maxYear],
-    });
-  };
+  const editions = useMemo(
+    () => editionsData.filter((e) => e.textId === textId),
+    [textId]
+  );
 
   const [showFilters, setShowFilters] = useState(true);
+  const [expandedEditions, setExpandedEditions] = useState({});
   const [minYear, setMinYear] = useState(1400);
   const [maxYear, setMaxYear] = useState(2025);
 
-  const editions = useMemo(() => {
-    return editionsData.filter((e) => e.textId === textId);
-  }, [textId]);
+  const [filters, setFilters] = useState({
+    // Existing Filters
+    hasOriginal: null,
+    hasCommentary: null,
+    hasApparatus: null,
+    publicDomain: null,
+    translationLanguages: [],
+    dateRange: [1400, 2025],
+    // New Filters
+    hasTranslation: null,
+    hasNotes: null,
+    hasGlossary: null,
+    hasIntroduction: null,
+    hasBibliography: null,
+    inPrint: null,
+    completeEdition: null,
+    editors: [],
+  });
 
-  // Calculate actual date range from editions
+  // Calculate dynamic min/max years and set initial date range filter
   useEffect(() => {
-    if (editions.length > 0) {
-      const years = editions
-        .map((e) => parseInt(e.publishedDate))
-        .filter((y) => !isNaN(y));
-      if (years.length > 0) {
-        const min = Math.min(...years);
-        const max = Math.max(...years);
-        setMinYear(min);
-        setMaxYear(max);
-        setFilters((prev) => ({ ...prev, dateRange: [min, max] }));
-      }
+    const years = editions
+      .map((e) => parseInt(e.publishedDate))
+      .filter(Boolean);
+    if (years.length) {
+      const min = Math.min(...years);
+      const max = Math.max(...years);
+      setMinYear(min);
+      setMaxYear(max);
+      setFilters((f) => ({ ...f, dateRange: [min, max] }));
     }
   }, [editions]);
 
-  // Get all unique translation languages
+  // Derive unique lists for multi-select filters
   const allTranslationLanguages = useMemo(() => {
-    const languages = new Set();
-    editions.forEach((ed) => {
-      ed.translationLanguages.forEach((lang) => languages.add(lang));
-    });
-    return Array.from(languages).sort();
+    const s = new Set();
+    editions.forEach((e) => e.translationLanguages?.forEach((l) => s.add(l)));
+    return Array.from(s).sort();
   }, [editions]);
 
+  const allEditors = useMemo(() => {
+    const s = new Set();
+    editions.forEach((e) => e.editors?.forEach((l) => s.add(l)));
+    return Array.from(s).sort();
+  }, [editions]);
+
+  // Update dateRange in filters when the slider/input values change
+  const handleDateRangeChange = (index, value) => {
+    const newRange = [...filters.dateRange];
+    // Ensure value is within the overall min/max bounds
+    const year = Math.max(minYear, Math.min(maxYear, parseInt(value) || 0));
+    newRange[index] = year;
+
+    // Ensure min <= max
+    if (newRange[0] > newRange[1]) {
+      // Swap if min is set higher than max, or vice-versa
+      newRange[index === 0 ? 1 : 0] = newRange[index];
+    }
+
+    setFilters((f) => ({ ...f, dateRange: newRange }));
+  };
+
+  // Main Filtering Logic
   const filteredEditions = useMemo(() => {
-    return editions.filter((ed) => {
-      // orignal text filter
+    return editions.filter((e) => {
+      // Date Range Filter
+      const y = parseInt(e.publishedDate);
+      if (y < filters.dateRange[0] || y > filters.dateRange[1]) return false;
+
+      // Simple Boolean Filters
       if (
         filters.hasOriginal !== null &&
-        ed.hasOriginal !== filters.hasOriginal
-      ) {
+        e.hasOriginalText !== filters.hasOriginal
+      )
         return false;
-      }
-
-      // Commentary filter
       if (
         filters.hasCommentary !== null &&
-        ed.hasCommentary !== filters.hasCommentary
-      ) {
+        e.hasCommentary !== filters.hasCommentary
+      )
         return false;
-      }
       if (
         filters.hasApparatus !== null &&
-        ed.hasApparatus !== filters.hasApparatus
-      ) {
+        e.hasApparatus !== filters.hasApparatus
+      )
         return false;
-      }
-
-      // Translation language filter
-      if (filters.translationLanguages.length > 0) {
-        const hasSelectedLanguage = filters.translationLanguages.some((lang) =>
-          ed.translationLanguages.includes(lang)
-        );
-        if (!hasSelectedLanguage) return false;
-      }
-
-      // Public domain filter
       if (
         filters.publicDomain !== null &&
-        ed.publicDomain !== filters.publicDomain
-      ) {
+        e.publicDomain !== filters.publicDomain
+      )
         return false;
+
+      // NEW BOOLEAN FILTERS
+      if (
+        filters.hasTranslation !== null &&
+        e.hasTranslation !== filters.hasTranslation
+      )
+        return false;
+      if (filters.hasNotes !== null && e.hasNotes !== filters.hasNotes)
+        return false;
+      if (filters.hasGlossary !== null && e.hasGlossary !== filters.hasGlossary)
+        return false;
+      if (
+        filters.hasIntroduction !== null &&
+        e.hasIntroduction !== filters.hasIntroduction
+      )
+        return false;
+      if (
+        filters.hasBibliography !== null &&
+        e.hasBibliography !== filters.hasBibliography
+      )
+        return false;
+      if (filters.inPrint !== null && e.inPrint !== filters.inPrint)
+        return false;
+      if (
+        filters.completeEdition !== null &&
+        e.completeEdition !== filters.completeEdition
+      )
+        return false;
+
+      // Multiselect: Translation Languages (must include AT LEAST one selected language)
+      if (filters.translationLanguages.length) {
+        if (
+          !filters.translationLanguages.some((l) =>
+            e.translationLanguages?.includes(l)
+          )
+        )
+          return false;
       }
 
-      // Date range filter
-      const year = parseInt(ed.publishedDate);
-      if (
-        !isNaN(year) &&
-        (year < filters.dateRange[0] || year > filters.dateRange[1])
-      ) {
-        return false;
+      // Multiselect: Editors (must include AT LEAST one selected editor)
+      if (filters.editors.length) {
+        if (!filters.editors.some((l) => e.editors?.includes(l))) return false;
       }
 
       return true;
     });
   }, [editions, filters]);
 
-  const toggleTranslationLanguage = (lang) => {
-    setFilters((prev) => ({
+  const toggleEdition = (editionId) => {
+    setExpandedEditions((prev) => ({
       ...prev,
-      translationLanguages: prev.translationLanguages.includes(lang)
-        ? prev.translationLanguages.filter((l) => l !== lang)
-        : [...prev.translationLanguages, lang],
+      [editionId]: !prev[editionId],
     }));
   };
 
-  if (!text) {
-    return (
-      <div className="max-w-4xl mx-auto px-4 py-16 text-center">
-        <h2 className="text-2xl font-semibold text-gray-900 mb-4">
-          Text not found
-        </h2>
-        <Link to="/search" className="text-blue-600 hover:text-blue-800">
-          Return to search
-        </Link>
-      </div>
+  const FeatureIcon = ({ has }) =>
+    has ? (
+      <Check className="w-4 h-4 text-green-600" />
+    ) : (
+      <X className="w-4 h-4 text-gray-400" />
     );
-  }
+
+  // Function to reset all filters
+  const resetFilters = () => {
+    setFilters({
+      hasOriginal: null,
+      hasCommentary: null,
+      hasApparatus: null,
+      publicDomain: null,
+      translationLanguages: [],
+      dateRange: [minYear, maxYear],
+      hasTranslation: null,
+      hasNotes: null,
+      hasGlossary: null,
+      hasIntroduction: null,
+      hasBibliography: null,
+      inPrint: null,
+      completeEdition: null,
+      editors: [],
+    });
+  };
 
   return (
-    <div className="max-w-7xl mx-auto px-4 py-8">
-      {/* Back Button */}
+    <div className="max-w-7xl mx-auto px-4 py-10 font-sans">
       <Link
-        to="/search"
-        className="inline-flex items-center gap-2 text-gray-600 hover:text-gray-900 mb-6"
+        to="/"
+        className="inline-flex items-center gap-2 mb-8 text-indigo-600 hover:text-indigo-800 font-medium transition duration-150"
       >
         <ArrowLeft className="w-4 h-4" />
         Back to search
       </Link>
 
-      {/* Text Header */}
-      <div className="bg-white rounded-lg border border-gray-200 p-6 mb-6">
-        <h1 className="text-3xl font-serif text-gray-900 mb-2">{text.title}</h1>
-        <p className="text-xl text-gray-600 mb-4">{text.titleOriginal}</p>
-        <div className="flex flex-wrap gap-4 text-sm text-gray-700">
-          <div className="w-full">
-            <span className="font-medium">Author(s):</span>{" "}
-            {text.authors.join(", ")}
-          </div>
-          <div className="w-full">
-            <span className="font-medium">Language:</span>{" "}
-            {text.originalLanguage}
-          </div>
-          {text.date && (
-            <div className="w-full">
-              <span className="font-medium">Date:</span> ~{text.date}
-            </div>
-          )}
-          {text.description && <div className="w-full">{text.description}</div>}
+      {/* Text Header - Sleek Card */}
+      <div className="bg-white border border-gray-200 rounded-xl p-8 mb-8 shadow-lg">
+        <h1 className="text-4xl font-serif text-gray-900 mb-2 font-bold">
+          {text.title}
+        </h1>
 
-          {text.wikiLink && (
-            <div>
-              <a href={text.wikiLink} target="_blank" className="text-blue-500">
-                Wikipedia
-              </a>
-            </div>
+        <div className="text-2xl text-gray-600 mb-1 font-serif">
+          {text.titleOriginal}
+          {text.titleTransliteration && (
+            <span className="italic text-gray-500 ml-3 text-xl">
+              {text.titleTransliteration}
+            </span>
           )}
         </div>
-        <div className="mt-4 text-sm text-gray-600">
-          {filteredEditions.length} edition
-          {filteredEditions.length !== 1 ? "s" : ""} available
+
+        {text.alternativeTitles?.length > 0 && (
+          <p className="text-sm text-gray-500 mb-4 mt-2">
+            Also known as: {text.alternativeTitles.join(", ")}
+          </p>
+        )}
+
+        <div className="border-t border-gray-200 pt-6 mt-6">
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-y-4 gap-x-6 text-sm">
+            {/* Author */}
+            <div>
+              <span className="font-semibold text-gray-700 block">
+                Author(s):
+              </span>
+              <div className="mt-1 text-gray-900">
+                {text.authors.join(", ")}
+              </div>
+              {text.authorsOriginal && (
+                <div className="text-gray-500 text-xs">
+                  {text.authorsOriginal.join(", ")}
+                </div>
+              )}
+            </div>
+
+            {/* Language */}
+            <div>
+              <span className="font-semibold text-gray-700 block">
+                Language:
+              </span>
+              <div className="mt-1 text-gray-900">
+                {text.originalLanguage} ({text.languageCode})
+              </div>
+              {text.dialect && (
+                <div className="text-gray-600 text-xs">{text.dialect}</div>
+              )}
+            </div>
+
+            {/* Genre */}
+            <div>
+              <span className="font-semibold text-gray-700 block">Genre:</span>
+              <div className="mt-1 text-gray-900">{text.genre}</div>
+              {text.subgenre?.length > 0 && (
+                <div className="text-gray-600 text-xs">
+                  {text.subgenre.join(", ")}
+                </div>
+              )}
+            </div>
+
+            {/* Date */}
+            {text.date && (
+              <div>
+                <span className="font-semibold text-gray-700 block">Date:</span>
+                <div className="mt-1 text-gray-900">~{text.date}</div>
+              </div>
+            )}
+
+            {/* Literary Period */}
+            {text.literaryPeriod && (
+              <div>
+                <span className="font-semibold text-gray-700 block">
+                  Period:
+                </span>
+                <div className="mt-1 text-gray-900">{text.literaryPeriod}</div>
+              </div>
+            )}
+
+            {/* Meter */}
+            {text.meter && (
+              <div>
+                <span className="font-semibold text-gray-700 block">
+                  Meter:
+                </span>
+                <div className="mt-1 text-gray-900">{text.meter}</div>
+              </div>
+            )}
+
+            {/* Structure */}
+            {text.structure && (
+              <div className="col-span-2">
+                <span className="font-semibold text-gray-700 block">
+                  Structure:
+                </span>
+                <div className="mt-1 text-gray-900">
+                  {text.structure.books && `${text.structure.books} books`}
+                  {text.structure.verses &&
+                    ` · ${text.structure.verses} verses`}
+                  {text.structure.lines &&
+                    text.structure.lines !== text.structure.verses &&
+                    ` · ${text.structure.lines} lines`}
+                  {text.structure.chapters &&
+                    ` · ${text.structure.chapters} chapters`}
+                </div>
+              </div>
+            )}
+          </div>
         </div>
+
+        {text.description && (
+          <p className="mt-6 pt-6 border-t border-gray-200 text-gray-700 leading-relaxed text-base">
+            {text.description}
+          </p>
+        )}
+
+        {/* Manuscript Tradition and First Printed Edition in a single section */}
+        {(text.manuscriptTradition || text.firstPrintedEdition) && (
+          <div className="mt-6 pt-6 border-t border-gray-200">
+            <h3 className="font-semibold text-xl text-gray-900 mb-4 flex items-center gap-2">
+              <FileText className="w-5 h-5 text-indigo-600" />
+              Textual History
+            </h3>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 text-sm">
+              {text.manuscriptTradition && (
+                <div>
+                  <h4 className="font-bold text-gray-800 mb-2">
+                    Manuscript Tradition
+                  </h4>
+                  <div className="space-y-2">
+                    <div className="text-gray-700">
+                      <span className="font-medium text-gray-900">
+                        Oldest manuscript:
+                      </span>
+                      <span className="ml-2">
+                        {text.manuscriptTradition.oldestManuscript}
+                      </span>
+                      {text.manuscriptTradition.oldestManuscriptDate && (
+                        <span className="text-gray-500 text-xs ml-2">
+                          ({text.manuscriptTradition.oldestManuscriptDate})
+                        </span>
+                      )}
+                    </div>
+                    <div className="text-gray-700">
+                      <span className="font-medium text-gray-900">
+                        Number of manuscripts:
+                      </span>
+                      <span className="ml-2">
+                        {text.manuscriptTradition.numberOfManuscripts}
+                      </span>
+                    </div>
+                    {text.manuscriptTradition.textualTransmission && (
+                      <p className="mt-2 text-gray-600 leading-relaxed italic">
+                        {text.manuscriptTradition.textualTransmission}
+                      </p>
+                    )}
+                  </div>
+                </div>
+              )}
+
+              {text.firstPrintedEdition && (
+                <div>
+                  <h4 className="font-bold text-gray-800 mb-2">
+                    First Printed Edition
+                  </h4>
+                  <div className="space-y-2">
+                    <div className="text-gray-700">
+                      <span className="font-medium text-gray-900">Year:</span>
+                      <span className="ml-2">
+                        {text.firstPrintedEdition.year}
+                      </span>
+                    </div>
+                    <div className="text-gray-700">
+                      <span className="font-medium text-gray-900">
+                        Location:
+                      </span>
+                      <span className="ml-2">
+                        {text.firstPrintedEdition.location || "N/A"}
+                      </span>
+                    </div>
+                    <div className="text-gray-700">
+                      <span className="font-medium text-gray-900">Editor:</span>
+                      <span className="ml-2">
+                        {text.firstPrintedEdition.editor || "N/A"}
+                      </span>
+                    </div>
+                  </div>
+                </div>
+              )}
+            </div>
+          </div>
+        )}
       </div>
 
-      {/* Filters Panel */}
-      <div className="bg-white rounded-lg border border-gray-200 p-4 mb-6">
+      {/* Filters Section - Modern Accordion Style */}
+      <div className="mb-8">
         <button
           onClick={() => setShowFilters(!showFilters)}
-          className="flex items-center justify-between w-full"
+          className="flex items-center gap-2 text-indigo-600 hover:text-indigo-800 font-semibold text-lg py-2 transition duration-150"
         >
-          <span className="font-medium text-gray-900 flex items-center gap-2">
-            <Filter className="w-5 h-5" />
-            Filter Editions
-          </span>
-          <span className="text-sm text-gray-600">
-            {showFilters ? "Hide" : "Show"}
-          </span>
+          <Filter className="w-5 h-5" />
+          {showFilters ? "Hide" : "Show"} Edition Filters (
+          {filteredEditions.length} of {editions.length})
+          {showFilters ? (
+            <ChevronUp className="w-5 h-5 ml-1" />
+          ) : (
+            <ChevronDown className="w-5 h-5 ml-1" />
+          )}
+        </button>
+
+        <button
+          onClick={resetFilters}
+          className="ml-4 text-sm text-gray-500 hover:text-gray-700 transition duration-150"
+        >
+          (Reset Filters)
         </button>
 
         {showFilters && (
-          <div className="mt-6 space-y-6">
-            {/* Date Range Slider */}
+          <div className="mt-4 bg-white border border-gray-200 rounded-xl p-6 shadow-lg space-y-6">
+            {/* Date Range Filter */}
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-3">
-                Publication Date Range: {filters.dateRange[0]} -{" "}
-                {filters.dateRange[1]}
+              <label className="block text-sm font-semibold text-gray-700 mb-3 flex items-center gap-2">
+                <SlidersHorizontal className="w-4 h-4 text-indigo-500" />
+                Publication Date Range
               </label>
-              <div className="flex gap-4 items-center">
+              <div className="flex items-center space-x-4">
                 <input
-                  type="range"
+                  type="number"
                   min={minYear}
                   max={maxYear}
                   value={filters.dateRange[0]}
-                  onChange={(e) =>
-                    setFilters((prev) => ({
-                      ...prev,
-                      dateRange: [parseInt(e.target.value), prev.dateRange[1]],
-                    }))
-                  }
-                  className="flex-1"
+                  onChange={(e) => handleDateRangeChange(0, e.target.value)}
+                  className="w-24 border border-gray-300 rounded-lg px-3 py-1.5 text-sm text-center focus:ring-indigo-500 focus:border-indigo-500"
                 />
+                <span className="text-gray-500 text-lg">–</span>
                 <input
-                  type="range"
+                  type="number"
                   min={minYear}
                   max={maxYear}
                   value={filters.dateRange[1]}
-                  onChange={(e) =>
-                    setFilters((prev) => ({
-                      ...prev,
-                      dateRange: [prev.dateRange[0], parseInt(e.target.value)],
-                    }))
-                  }
-                  className="flex-1"
+                  onChange={(e) => handleDateRangeChange(1, e.target.value)}
+                  className="w-24 border border-gray-300 rounded-lg px-3 py-1.5 text-sm text-center focus:ring-indigo-500 focus:border-indigo-500"
                 />
+                <span className="text-sm text-gray-500 ml-4">
+                  ({minYear} - {maxYear})
+                </span>
               </div>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-              {/* Orginal text Filter */}
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Original
-                </label>
-                <select
-                  value={
-                    filters.hasOriginal === null ? "all" : filters.hasOriginal
-                  }
-                  onChange={(e) =>
-                    setFilters({
-                      ...filters,
-                      hasOriginal:
-                        e.target.value === "all"
-                          ? null
-                          : e.target.value === "true",
-                    })
-                  }
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                >
-                  <option value="all">All</option>
-                  <option value="true">With Original</option>
-                  <option value="false">Without Original</option>
-                </select>
-              </div>
-
-              {/* Critical Apparatus Filter */}
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Critical Apparatus
-                </label>
-                <select
-                  value={
-                    filters.hasApparatus === null ? "all" : filters.hasApparatus
-                  }
-                  onChange={(e) =>
-                    setFilters({
-                      ...filters,
-                      hasApparatus:
-                        e.target.value === "all"
-                          ? null
-                          : e.target.value === "true",
-                    })
-                  }
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                >
-                  <option value="all">All</option>
-                  <option value="true">With Apparatus</option>
-                  <option value="false">Without Apparatus</option>
-                </select>
-              </div>
-
-              {/* Commentary Filter */}
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Commentary
-                </label>
-                <select
-                  value={
-                    filters.hasCommentary === null
-                      ? "all"
-                      : filters.hasCommentary
-                  }
-                  onChange={(e) =>
-                    setFilters({
-                      ...filters,
-                      hasCommentary:
-                        e.target.value === "all"
-                          ? null
-                          : e.target.value === "true",
-                    })
-                  }
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                >
-                  <option value="all">All</option>
-                  <option value="true">With Commentary</option>
-                  <option value="false">Without Commentary</option>
-                </select>
-              </div>
-
-              {/* Public Domain Filter */}
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Access
-                </label>
-                <select
-                  value={
-                    filters.publicDomain === null ? "all" : filters.publicDomain
-                  }
-                  onChange={(e) =>
-                    setFilters({
-                      ...filters,
-                      publicDomain:
-                        e.target.value === "all"
-                          ? null
-                          : e.target.value === "true",
-                    })
-                  }
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                >
-                  <option value="all">All</option>
-                  <option value="true">Public Domain</option>
-                  <option value="false">In Copyright</option>
-                </select>
-              </div>
+            {/* Boolean Filters (Features) Grid */}
+            <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4 border-t pt-4">
+              <FilterSelect
+                label="Original Text"
+                value={filters.hasOriginal}
+                onChange={(v) => setFilters({ ...filters, hasOriginal: v })}
+              />
+              <FilterSelect
+                label="Translation"
+                value={filters.hasTranslation}
+                onChange={(v) => setFilters({ ...filters, hasTranslation: v })}
+              />
+              <FilterSelect
+                label="Commentary"
+                value={filters.hasCommentary}
+                onChange={(v) => setFilters({ ...filters, hasCommentary: v })}
+              />
+              <FilterSelect
+                label="Apparatus"
+                value={filters.hasApparatus}
+                onChange={(v) => setFilters({ ...filters, hasApparatus: v })}
+              />
+              <FilterSelect
+                label="Notes"
+                value={filters.hasNotes}
+                onChange={(v) => setFilters({ ...filters, hasNotes: v })}
+              />
+              <FilterSelect
+                label="Glossary"
+                value={filters.hasGlossary}
+                onChange={(v) => setFilters({ ...filters, hasGlossary: v })}
+              />
+              <FilterSelect
+                label="Introduction"
+                value={filters.hasIntroduction}
+                onChange={(v) => setFilters({ ...filters, hasIntroduction: v })}
+              />
+              <FilterSelect
+                label="Bibliography"
+                value={filters.hasBibliography}
+                onChange={(v) => setFilters({ ...filters, hasBibliography: v })}
+              />
             </div>
 
-            {/* Translation Languages Filter */}
-            {allTranslationLanguages.length > 0 && (
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Translation Languages
-                </label>
-                <div className="flex flex-wrap gap-2">
-                  {allTranslationLanguages.map((lang) => (
-                    <button
-                      key={lang}
-                      onClick={() => toggleTranslationLanguage(lang)}
-                      className={`px-3 py-1 rounded-lg text-sm font-medium transition-colors ${
-                        filters.translationLanguages.includes(lang)
-                          ? "bg-blue-600 text-white"
-                          : "bg-gray-100 text-gray-700 hover:bg-gray-200"
-                      }`}
-                    >
-                      {lang}
-                    </button>
-                  ))}
-                </div>
-                {filters.translationLanguages.length > 0 && (
-                  <button
-                    onClick={() =>
-                      setFilters((prev) => ({
-                        ...prev,
-                        translationLanguages: [],
-                      }))
-                    }
-                    className="mt-2 text-sm text-blue-600 hover:text-blue-800"
-                  >
-                    Clear language filters
-                  </button>
-                )}
-              </div>
-            )}
-            <div className="flex justify-end">
-              <button
-                onClick={resetFilters}
-                className="text-sm text-red-600 hover:text-red-800 font-medium"
-              >
-                Clear all filters
-              </button>
+            {/* Boolean Filters (Status) Grid */}
+            <div className="grid grid-cols-2 md:grid-cols-3 gap-4 border-t pt-4">
+              <FilterSelect
+                label="Public Domain"
+                value={filters.publicDomain}
+                onChange={(v) => setFilters({ ...filters, publicDomain: v })}
+              />
+              <FilterSelect
+                label="In Print"
+                value={filters.inPrint}
+                onChange={(v) => setFilters({ ...filters, inPrint: v })}
+              />
+              <FilterSelect
+                label="Complete Edition"
+                value={filters.completeEdition}
+                onChange={(v) => setFilters({ ...filters, completeEdition: v })}
+              />
+            </div>
+
+            {/* Multi-select Filters */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 border-t pt-4">
+              <MultiSelectFilter
+                label="Translation Languages"
+                options={allTranslationLanguages}
+                selected={filters.translationLanguages}
+                onChange={(v) =>
+                  setFilters({ ...filters, translationLanguages: v })
+                }
+              />
+              <MultiSelectFilter
+                label="Editor(s)"
+                options={allEditors}
+                selected={filters.editors}
+                onChange={(v) => setFilters({ ...filters, editors: v })}
+              />
             </div>
           </div>
         )}
       </div>
 
       {/* Editions List */}
-      <div className="space-y-4">
+      <div className="mb-4">
+        <h2 className="text-3xl font-serif text-gray-900 mb-6">
+          Available Editions
+        </h2>
+      </div>
+
+      <div className="space-y-5">
         {filteredEditions.map((edition) => (
           <div
             key={edition.editionId}
-            className="bg-white rounded-lg border border-gray-200 p-6"
+            className="bg-white border border-gray-200 rounded-xl shadow-md hover:shadow-lg transition duration-300 overflow-hidden"
           >
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-              {/* Left Column */}
-              <div className="space-y-4">
-                <div>
-                  <div className="flex items-center gap-2 text-sm font-medium text-gray-700 mb-1">
-                    <Calendar className="w-4 h-4" />
-                    Published
-                  </div>
-                  <div className="text-gray-900">{edition.publishedDate}</div>
-                </div>
-
-                <div>
-                  <div className="flex items-center gap-2 text-sm font-medium text-gray-700 mb-1">
-                    <User className="w-4 h-4" />
-                    Editor(s)
-                  </div>
-                  <div className="text-gray-900">
-                    {edition.editors.join(", ")}
-                  </div>
-                </div>
-
-                <div>
-                  <div className="flex items-center gap-2 text-sm font-medium text-gray-700 mb-1">
-                    <FileText className="w-4 h-4" />
-                    Manuscripts
-                  </div>
-                  <div className="text-gray-900 text-sm">
-                    {edition.manuscripts.join(", ")}
-                  </div>
-                </div>
-
-                <div>
-                  <div className="text-sm font-medium text-gray-700 mb-1">
-                    Publisher
-                  </div>
-                  <div className="text-gray-900">{edition.publisher}</div>
-                  {edition.isbn && (
-                    <div className="text-sm text-gray-600 mt-1">
-                      ISBN: {edition.isbn}
-                    </div>
+            <div className="p-6">
+              <div className="flex items-start justify-between mb-4">
+                <div className="flex-1">
+                  <h3 className="text-xl font-semibold text-gray-900 mb-1">
+                    {edition.editionTitle}
+                  </h3>
+                  {edition.seriesName && (
+                    <p className="text-sm text-indigo-600 font-medium">
+                      {edition.seriesName}
+                      {edition.seriesNumber && ` #${edition.seriesNumber}`}
+                    </p>
                   )}
                 </div>
-                <div>
-                  <div className="text-sm font-medium text-gray-700 mb-1">
-                    Remarks
-                  </div>
-                  <div className="text-gray-900">{edition.remarks}</div>
-                </div>
+                <button
+                  onClick={() => toggleEdition(edition.editionId)}
+                  className="text-gray-500 hover:text-indigo-600 ml-4 p-2 rounded-full hover:bg-indigo-50 transition"
+                >
+                  {expandedEditions[edition.editionId] ? (
+                    <ChevronUp className="w-5 h-5" />
+                  ) : (
+                    <ChevronDown className="w-5 h-5" />
+                  )}
+                </button>
               </div>
 
-              {/* Right Column */}
-              <div className="space-y-4">
-                <div className="flex flex-wrap gap-2">
-                  <span
-                    className={`px-3 py-1 rounded text-xs font-medium ${
-                      edition.hasOriginal
-                        ? "bg-green-100 text-green-800"
-                        : "bg-gray-100 text-gray-600"
-                    }`}
-                  >
-                    {edition.hasOriginal ? "✓ Original" : "✗ No Original"}
-                  </span>
-                  <span
-                    className={`px-3 py-1 rounded text-xs font-medium ${
-                      edition.hasCommentary
-                        ? "bg-green-100 text-green-800"
-                        : "bg-gray-100 text-gray-600"
-                    }`}
-                  >
-                    {edition.hasCommentary ? "✓ Commentary" : "✗ No Commentary"}
-                  </span>
-
-                  <span
-                    className={`px-3 py-1 rounded text-xs font-medium ${
-                      edition.hasApparatus
-                        ? "bg-green-100 text-green-800"
-                        : "bg-gray-100 text-gray-600"
-                    }`}
-                  >
-                    {edition.hasCommentary ? "✓ Apparatus" : "✗ No Apparatus"}
-                  </span>
-
-                  <span
-                    className={`px-3 py-1 rounded text-xs font-medium ${
-                      edition.translationLanguages.length > 0
-                        ? "bg-green-100 text-green-800"
-                        : "bg-gray-100 text-gray-600"
-                    }`}
-                  >
-                    {edition.translationLanguages.length > 0
-                      ? "✓ Translation"
-                      : "✗ No Translation"}
-                  </span>
-                  <span
-                    className={`px-3 py-1 rounded text-xs font-medium ${
-                      edition.publicDomain
-                        ? "bg-blue-100 text-blue-800"
-                        : "bg-amber-100 text-amber-800"
-                    }`}
-                  >
-                    {edition.publicDomain ? "Public Domain" : "In Copyright"}
-                  </span>
+              <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 text-sm border-t pt-4">
+                <div className="flex items-center gap-3">
+                  <Calendar className="w-4 h-4 text-indigo-500 flex-shrink-0" />
+                  <div>
+                    <div className="font-medium text-gray-700">Published</div>
+                    <div className="text-gray-900">{edition.publishedDate}</div>
+                  </div>
                 </div>
 
-                {edition.translationLanguages.length > 0 && (
+                <div className="flex items-center gap-3">
+                  <User className="w-4 h-4 text-indigo-500 flex-shrink-0" />
                   <div>
-                    <div className="flex items-center gap-2 text-sm font-medium text-gray-700 mb-1">
-                      <Globe className="w-4 h-4" />
-                      Translations
+                    <div className="font-medium text-gray-700">Editor(s)</div>
+                    <div
+                      className="text-gray-900 truncate"
+                      title={edition.editors.join(", ")}
+                    >
+                      {edition.editors.join(", ")}
                     </div>
-                    <div className="text-gray-900 text-sm">
-                      {edition.translationLanguages.join(", ")}
+                  </div>
+                </div>
+
+                <div className="flex items-center gap-3">
+                  <Book className="w-4 h-4 text-indigo-500 flex-shrink-0" />
+                  <div>
+                    <div className="font-medium text-gray-700">Publisher</div>
+                    <div
+                      className="text-gray-900 truncate"
+                      title={edition.publisher}
+                    >
+                      {edition.publisher}
+                    </div>
+                  </div>
+                </div>
+
+                {edition.translators?.length > 0 && (
+                  <div className="flex items-center gap-3">
+                    <Globe className="w-4 h-4 text-indigo-500 flex-shrink-0" />
+                    <div>
+                      <div className="font-medium text-gray-700">
+                        Translator(s)
+                      </div>
+                      <div
+                        className="text-gray-900 truncate"
+                        title={edition.translators.join(", ")}
+                      >
+                        {edition.translators.join(", ")}
+                      </div>
                     </div>
                   </div>
                 )}
+              </div>
 
-                {edition.reviews.length > 0 && (
-                  <div>
-                    <div className="text-sm font-medium text-gray-700 mb-2">
-                      Published Reviews
+              {/* Features Grid */}
+              <div className="mt-4 pt-4 border-t border-gray-100">
+                <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-8 gap-x-4 gap-y-2 text-sm">
+                  {[
+                    { label: "Original Text", has: edition.hasOriginalText },
+                    { label: "Translation", has: edition.hasTranslation },
+                    { label: "Commentary", has: edition.hasCommentary },
+                    { label: "Apparatus", has: edition.hasApparatus },
+                    { label: "Notes", has: edition.hasNotes },
+                    { label: "Glossary", has: edition.hasGlossary },
+                    { label: "Introduction", has: edition.hasIntroduction },
+                    { label: "Bibliography", has: edition.hasBibliography },
+                  ].map((feature, index) => (
+                    <div
+                      key={index}
+                      className="flex items-center gap-1.5 text-gray-700"
+                    >
+                      <FeatureIcon has={feature.has} />
+                      <span
+                        className={
+                          feature.has ? "font-medium" : "text-gray-500"
+                        }
+                      >
+                        {feature.label}
+                      </span>
                     </div>
-                    <div className="space-y-1">
-                      {edition.reviews.map((review, idx) => (
-                        <div key={idx}>
-                          {review.link ? (
+                  ))}
+                </div>
+              </div>
+
+              {/* Translation Languages and Status badges */}
+              <div className="mt-4 pt-4 border-t border-gray-100 flex flex-wrap items-center gap-4">
+                {edition.translationLanguages?.length > 0 && (
+                  <div className="flex items-center gap-2 text-sm">
+                    <Globe className="w-4 h-4 text-gray-500" />
+                    <span className="font-medium text-gray-700">
+                      Translations:
+                    </span>
+                    <span className="text-gray-600">
+                      {edition.translationLanguages.join(", ")}
+                    </span>
+                  </div>
+                )}
+
+                {/* Status badges */}
+                <div className="flex flex-wrap gap-2">
+                  {edition.publicDomain && (
+                    <span className="px-3 py-1 bg-green-100 text-green-800 text-xs font-medium rounded-full">
+                      Public Domain
+                    </span>
+                  )}
+                  {edition.inPrint && (
+                    <span className="px-3 py-1 bg-blue-100 text-blue-800 text-xs font-medium rounded-full">
+                      In Print
+                    </span>
+                  )}
+                  {edition.completeEdition && (
+                    <span className="px-3 py-1 bg-gray-100 text-gray-800 text-xs font-medium rounded-full">
+                      Complete Edition
+                    </span>
+                  )}
+                </div>
+              </div>
+
+              {/* Expanded Details */}
+              {expandedEditions[edition.editionId] && (
+                <div className="mt-6 pt-6 border-t border-gray-200 space-y-5">
+                  {/* Manuscripts */}
+                  {edition.manuscripts?.length > 0 && (
+                    <div className="text-sm">
+                      <div className="font-semibold text-gray-900 mb-1">
+                        Manuscripts Used:
+                      </div>
+                      <div className="text-gray-700 leading-relaxed">
+                        {edition.manuscripts.join(", ")}
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Translators (if not already shown in header) */}
+                  {/* Already shown in header if translators exist, so no need to repeat. */}
+
+                  {/* ISBN */}
+                  {edition.isbn && (
+                    <div className="text-sm">
+                      <span className="font-semibold text-gray-900">ISBN:</span>
+                      <span className="text-gray-700 ml-2">{edition.isbn}</span>
+                    </div>
+                  )}
+
+                  {/* Public Domain Resources */}
+                  {edition.publicDomainResource?.length > 0 && (
+                    <div className="text-sm">
+                      <div className="font-semibold text-gray-900 mb-2">
+                        Online Resources:
+                      </div>
+                      <ul className="space-y-1">
+                        {edition.publicDomainResource.map((r, i) => (
+                          <li key={i}>
                             <a
-                              href={review.link}
+                              href={r.link}
                               target="_blank"
                               rel="noopener noreferrer"
-                              className="text-sm text-blue-600 hover:text-blue-800 inline-flex items-center gap-1"
+                              className="text-blue-600 hover:text-blue-800 hover:underline inline-flex items-center gap-1 transition duration-150"
                             >
-                              {review.source}{" "}
+                              {r.source}
                               <ExternalLink className="w-3 h-3" />
                             </a>
-                          ) : (
-                            <span className="text-sm text-gray-900">
-                              {review.source}
-                            </span>
-                          )}
-                        </div>
-                      ))}
+                          </li>
+                        ))}
+                      </ul>
                     </div>
-                  </div>
-                )}
-
-                <div className="flex gap-3 pt-2">
-                  {edition.publisherLink && (
-                    <a
-                      href={edition.publisherLink}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="inline-flex items-center gap-1 text-sm text-blue-600 hover:text-blue-800"
-                    >
-                      Publisher Page <ExternalLink className="w-3 h-3" />
-                    </a>
                   )}
-                  {edition.pdfLink && (
-                    <a
-                      href={edition.pdfLink}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="inline-flex items-center gap-1 text-sm text-blue-600 hover:text-blue-800"
-                    >
-                      Download PDF <ExternalLink className="w-3 h-3" />
-                    </a>
+
+                  {/* Reviews */}
+                  {edition.reviews?.length > 0 && (
+                    <div className="text-sm">
+                      <div className="font-semibold text-gray-900 mb-2 flex items-center gap-2">
+                        <Award className="w-4 h-4 text-indigo-500" />
+                        Reviews:
+                      </div>
+                      <ul className="space-y-1">
+                        {edition.reviews.map((r, i) => (
+                          <li key={i}>
+                            <a
+                              href={r.link}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="text-blue-600 hover:text-blue-800 hover:underline inline-flex items-center gap-1 transition duration-150"
+                            >
+                              {r.source}
+                              {r.reviewer && ` (${r.reviewer})`}
+                              <ExternalLink className="w-3 h-3" />
+                            </a>
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                  )}
+
+                  {/* Remarks */}
+                  {edition.remarks && (
+                    <div className="text-sm">
+                      <div className="font-semibold text-gray-900 mb-1">
+                        Remarks:
+                      </div>
+                      <div className="text-gray-700 leading-relaxed italic border-l-2 border-indigo-200 pl-3 py-1">
+                        {edition.remarks}
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Publisher Link */}
+                  {edition.publisherLink && (
+                    <div>
+                      <a
+                        href={edition.publisherLink}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="inline-flex items-center gap-1 text-sm text-indigo-600 hover:text-indigo-800 hover:underline font-medium transition duration-150"
+                      >
+                        View on publisher's website
+                        <ExternalLink className="w-3 h-3" />
+                      </a>
+                    </div>
                   )}
                 </div>
-              </div>
+              )}
             </div>
           </div>
         ))}
 
         {filteredEditions.length === 0 && (
-          <div className="bg-white rounded-lg border border-gray-200 p-12 text-center">
-            <p className="text-gray-600">
-              No editions match the selected filters
+          <div className="bg-white border border-gray-200 rounded-xl p-10 text-center text-gray-500 shadow-md">
+            <Filter className="w-8 h-8 mx-auto mb-3" />
+            <p className="text-lg font-medium">
+              No editions match your current filters.
             </p>
             <button
               onClick={resetFilters}
-              className="mt-4 text-blue-600 hover:text-blue-800 text-sm font-medium"
+              className="mt-4 text-sm text-indigo-600 hover:text-indigo-800 font-medium transition duration-150"
             >
               Clear all filters
             </button>
