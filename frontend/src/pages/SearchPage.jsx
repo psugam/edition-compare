@@ -14,54 +14,74 @@ import {
   LayoutGrid,
   Zap,
   Calendar,
+  Loader2, // Added for loading state
 } from "lucide-react";
 
-import textsData from "../data/texts_new.json";
+// 1. Updated Imports
+import api from "../utils/axiosInstance";
 
 function SearchPage() {
+  // 2. New Data States
+  const [texts, setTexts] = useState([]);
+  const [loading, setLoading] = useState(true);
+
   const [searchTerm, setSearchTerm] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
 
   // Filter States
   const [languageFilter, setLanguageFilter] = useState("all");
   const [genreFilter, setGenreFilter] = useState("all");
-  const [dataQualityFilter, setDataQualityFilter] = useState("all"); // New Filter
+  const [dataQualityFilter, setDataQualityFilter] = useState("all");
   const [minDateFilter, setMinDateFilter] = useState(null);
   const [maxDateFilter, setMaxDateFilter] = useState(null);
 
   const ITEMS_PER_PAGE = 9;
+
+  // 3. Fetch Data from Backend
+  useEffect(() => {
+    const fetchTexts = async () => {
+      try {
+        setLoading(true);
+        const response = await api.get("/api/texts");
+        // Assuming your backend returns the array directly or in a .data property
+        setTexts(Array.isArray(response.data) ? response.data : []);
+      } catch (error) {
+        console.error("Error fetching texts:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchTexts();
+  }, []);
 
   /* ------------------------------------------
    * Derived data and Filter Options
    * ----------------------------------------*/
 
   const sortedTexts = useMemo(() => {
-    // Sort once on load
-    return [...textsData].sort((a, b) => a.title.localeCompare(b.title));
-  }, []);
+    return [...texts].sort((a, b) => a.title.localeCompare(b.title));
+  }, [texts]); // Dependency updated to texts
 
   // Calculate unique filter options
   const languageOptions = useMemo(() => {
-    return [...new Set(textsData.map((t) => t.originalLanguage))].sort();
-  }, []);
+    return [...new Set(texts.map((t) => t.originalLanguage))].sort();
+  }, [texts]);
 
   const genreOptions = useMemo(() => {
-    return [...new Set(textsData.map((t) => t.genre).filter(Boolean))].sort();
-  }, []);
+    return [...new Set(texts.map((t) => t.genre).filter(Boolean))].sort();
+  }, [texts]);
 
   const dataQualityOptions = useMemo(() => {
-    return [
-      ...new Set(textsData.map((t) => t.dataQuality).filter(Boolean)),
-    ].sort();
-  }, []);
+    return [...new Set(texts.map((t) => t.dataQuality).filter(Boolean))].sort();
+  }, [texts]);
 
   const dateRange = useMemo(() => {
-    const dates = textsData
+    const dates = texts
       .map((t) => t.dateNumeric)
       .filter((d) => typeof d === "number");
     if (dates.length === 0) return { min: null, max: null };
     return { min: Math.min(...dates), max: Math.max(...dates) };
-  }, []);
+  }, [texts]);
 
   // Set initial date filter bounds based on data
   useEffect(() => {
@@ -83,7 +103,7 @@ function SearchPage() {
     setDataQualityFilter("all");
     setMinDateFilter(dateRange.min);
     setMaxDateFilter(dateRange.max);
-    setCurrentPage(1); // Important: Reset pagination after state update
+    setCurrentPage(1);
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
@@ -94,31 +114,26 @@ function SearchPage() {
   const filteredTexts = useMemo(() => {
     const q = searchTerm.toLowerCase();
 
-    const filtered = sortedTexts.filter((text) => {
-      // 1. Text Search
+    return sortedTexts.filter((text) => {
       const matchesSearch =
         text.title.toLowerCase().includes(q) ||
         text.titleOriginal.toLowerCase().includes(q) ||
         (text.titleTransliteration &&
           text.titleTransliteration.toLowerCase().includes(q)) ||
-        text.authors.some((a) => a.toLowerCase().includes(q)) || // Still search authors
+        text.authors.some((a) => a.toLowerCase().includes(q)) ||
         (text.genre && text.genre.toLowerCase().includes(q)) ||
-        (text.literaryPeriod && text.literaryPeriod.toLowerCase().includes(q)); // Still search period
+        (text.literaryPeriod && text.literaryPeriod.toLowerCase().includes(q));
 
       if (!matchesSearch) return false;
 
-      // 2. Language Filter
       if (languageFilter !== "all" && text.originalLanguage !== languageFilter)
         return false;
 
-      // 3. Genre Filter
       if (genreFilter !== "all" && text.genre !== genreFilter) return false;
 
-      // 4. Data Quality Filter
       if (dataQualityFilter !== "all" && text.dataQuality !== dataQualityFilter)
         return false;
 
-      // 5. Date Range Filter (using dateNumeric)
       const currentMin = minDateFilter === null ? dateRange.min : minDateFilter;
       const currentMax = maxDateFilter === null ? dateRange.max : maxDateFilter;
 
@@ -133,11 +148,6 @@ function SearchPage() {
 
       return true;
     });
-
-    // Reset to page 1 upon filtering change
-    // Note: The dependency array should handle the state update triggering this useMemo.
-    // setCurrentPage(1) moved out of here and handled via the reset function
-    return filtered;
   }, [
     searchTerm,
     languageFilter,
@@ -149,8 +159,6 @@ function SearchPage() {
     dateRange,
   ]);
 
-  // Effect to reset page to 1 whenever filters change, except when date filters are being set initially
-  // Use state variables (and not the computed filterTexts) as dependencies
   useEffect(() => {
     setCurrentPage(1);
   }, [
@@ -163,7 +171,7 @@ function SearchPage() {
   ]);
 
   /* ------------------------------------------
-   * Pagination Logic (RETAINED)
+   * Pagination Logic
    * ----------------------------------------*/
 
   const totalPages = Math.ceil(filteredTexts.length / ITEMS_PER_PAGE);
@@ -232,7 +240,7 @@ function SearchPage() {
     </div>
   );
 
-  const DateInput = ({ label, value, onChange, min, max }) => (
+  const DateInput = ({ label, value, onChange }) => (
     <div>
       <label className="block text-xs font-medium text-gray-500 mb-1">
         {label}
@@ -266,9 +274,7 @@ function SearchPage() {
         Classical Texts Search
       </h1>
 
-      {/* Search / Filter Section - Sleek Card */}
       <div className="bg-white border border-gray-200 rounded-xl p-6 mb-8 shadow-lg">
-        {/* Search Bar and Reset */}
         <div className="flex justify-between items-end mb-6 pb-6 border-b border-gray-200">
           <div className="flex-1 mr-4">
             <label className="block text-sm font-semibold text-gray-700 mb-2">
@@ -285,7 +291,6 @@ function SearchPage() {
             </div>
           </div>
 
-          {/* Reset Button */}
           <button
             onClick={resetFilters}
             className="flex items-center space-x-2 px-4 py-3 bg-red-500 text-white rounded-lg text-sm font-medium hover:bg-red-600 transition duration-150 shadow-md"
@@ -295,9 +300,7 @@ function SearchPage() {
           </button>
         </div>
 
-        {/* Filters Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-          {/* Language Filter */}
           <FilterSelect
             label="Original Language"
             icon={<Feather className="w-4 h-4 text-indigo-500" />}
@@ -306,7 +309,6 @@ function SearchPage() {
             options={languageOptions}
           />
 
-          {/* Genre Filter */}
           <FilterSelect
             label="Genre"
             icon={<LayoutGrid className="w-4 h-4 text-indigo-500" />}
@@ -315,7 +317,6 @@ function SearchPage() {
             options={genreOptions}
           />
 
-          {/* Data Quality Filter (NEW) */}
           <FilterSelect
             label="Data Quality"
             icon={<Zap className="w-4 h-4 text-indigo-500" />}
@@ -324,7 +325,6 @@ function SearchPage() {
             options={dataQualityOptions}
           />
 
-          {/* Date Range Filter (Numeric Date) */}
           <div className="col-span-1">
             <label className="flex items-center gap-2 text-sm font-semibold text-gray-700 mb-2">
               <Calendar className="w-4 h-4 text-indigo-500" />
@@ -347,13 +347,22 @@ function SearchPage() {
         </div>
       </div>
 
-      {/* Results Section */}
       <h2 className="text-2xl font-serif text-gray-800 mb-6">
-        {filteredTexts.length} {filteredTexts.length === 1 ? "Text" : "Texts"}{" "}
-        Found
+        {loading
+          ? "Loading library..."
+          : `${filteredTexts.length} ${
+              filteredTexts.length === 1 ? "Text" : "Texts"
+            } Found`}
       </h2>
 
-      {paginatedTexts.length > 0 ? (
+      {loading ? (
+        <div className="flex flex-col items-center justify-center py-20">
+          <Loader2 className="w-12 h-12 text-indigo-500 animate-spin mb-4" />
+          <p className="text-gray-500 font-medium">
+            Fetching classical records...
+          </p>
+        </div>
+      ) : paginatedTexts.length > 0 ? (
         <>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {paginatedTexts.map((text) => (
@@ -379,7 +388,6 @@ function SearchPage() {
                     )}
                   </p>
 
-                  {/* Key Details */}
                   <div className="space-y-1 text-sm text-gray-700 mb-3">
                     <div className="flex items-center gap-2">
                       <Feather className="w-4 h-4 text-gray-500 flex-shrink-0" />
@@ -398,7 +406,6 @@ function SearchPage() {
                     </div>
                   </div>
 
-                  {/* Truncated Description */}
                   {text.description && (
                     <p className="text-xs text-gray-500 mt-2 line-clamp-3 leading-snug">
                       {text.description}
@@ -426,7 +433,6 @@ function SearchPage() {
             ))}
           </div>
 
-          {/* Pagination (RETAINED) */}
           {totalPages > 1 && (
             <div className="flex justify-center gap-1 mt-10">
               <button
