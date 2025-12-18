@@ -19,6 +19,7 @@ import SignupPage from "./pages/Signup";
 import ProtectedRoute from "./components/ProtectedRoute"; // <-- Import the new component
 
 // Admin Pages
+import AdminPage from "./pages/admin/AdminPage";
 import AddDataPage from "./pages/admin/AddDataPage";
 import ManageTextsPage from "./pages/admin/ManageTexts";
 import ManageEditionsPage from "./pages/admin/ManageEditions";
@@ -51,6 +52,7 @@ function App() {
                 <Outlet /> renders the child elements if the check passes.
               */}
               <Route element={<ProtectedRoute allowedRoles={["admin"]} />}>
+                <Route path="/admin" element={<AdminPage />} />
                 <Route path="/admin/add" element={<AddDataPage />} />
                 <Route path="/admin/texts" element={<ManageTextsPage />} />
                 <Route

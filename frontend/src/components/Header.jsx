@@ -69,6 +69,9 @@ function Header() {
             <Link to="/contact" className={getLinkClass("/contact")}>
               Contact
             </Link>
+            <Link to="/admin" className={getLinkClass("/admin")}>
+              Admin
+            </Link>
           </nav>
 
           {/* Mobile hamburger */}
@@ -91,6 +94,7 @@ function Header() {
 
             <MobileLink to="/about">About</MobileLink>
             <MobileLink to="/contact">Contact</MobileLink>
+            <MobileLink to="/admin">Admin</MobileLink>
           </nav>
         )}
       </div>
