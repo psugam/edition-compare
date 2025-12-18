@@ -88,4 +88,21 @@ router.delete("/:editionId", async (req, res) => {
   }
 });
 
+// 6. GET ALL editions related to one text
+router.get("/text/:textId", async (req, res) => {
+  try {
+    const editions = await Edition.find({ textId: req.params.textId });
+    if (!editions) {
+      return res
+        .status(404)
+        .json({ message: "Editions associated with this textnot found" });
+    }
+    res.status(200).json(editions);
+  } catch (error) {
+    res
+      .status(500)
+      .json({ message: "Error deleting edition", error: error.message });
+  }
+});
+
 module.exports = router;
