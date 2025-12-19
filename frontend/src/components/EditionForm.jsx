@@ -28,13 +28,13 @@ const EditionForm = ({ onSubmit, isLoading }) => {
     hasOriginalText: false,
     hasTranslation: false,
     translationLanguages: [""],
-    translationType: "prose", // enum
+    translationType: null, // enum
     hasFacingTranslation: false,
     // Commentary
     hasCommentary: false,
     commentaryType: "",
     commentaryLanguage: "",
-    commentaryLength: "moderate", // enum
+    commentaryLength: null, // enum
     // Apparatus
     hasApparatus: false,
     apparatusType: "",
@@ -54,7 +54,7 @@ const EditionForm = ({ onSubmit, isLoading }) => {
     lineNumbering: false,
     lineNumberingInterval: "",
     paragraphNumbering: false,
-    columnLayout: "single", // enum
+    columnLayout: null, // enum
     // Publisher & Legality
     publisher: "",
     publisherLink: "",
@@ -71,16 +71,22 @@ const EditionForm = ({ onSubmit, isLoading }) => {
     remarks: "",
     // Metadata
     verifiedByAdmin: false,
-    dataQuality: "medium", // enum
+    dataQuality: null, // enum
   });
 
   // --- Handlers ---
 
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
+    let finalValue = type === "checkbox" ? checked : value;
+
+    // Convert empty strings from select inputs to null for enum fields
+    if (type !== "checkbox" && value === "") {
+      finalValue = null;
+    }
     setFormData((prev) => ({
       ...prev,
-      [name]: type === "checkbox" ? checked : value,
+      [name]: finalValue,
     }));
   };
 
@@ -233,6 +239,47 @@ const EditionForm = ({ onSubmit, isLoading }) => {
           </label>
         </section>
 
+        {/* SECTION 2.5: MORE PUBLICATION & TEXTUAL FEATURES */}
+        <section className="space-y-4 border-b pb-6 md:border-b-0 lg:border-r lg:pr-6">
+          <h3 className="font-bold text-emerald-700 uppercase tracking-wider border-b pb-1">
+            More Details
+          </h3>
+          <label className="block">
+            Page Count
+            <input
+              type="number"
+              name="pageCount"
+              onChange={handleChange}
+              className="w-full p-2 border rounded mt-1"
+            />
+          </label>
+          <label className="block">
+            Publisher Link
+            <input
+              name="publisherLink"
+              onChange={handleChange}
+              className="w-full p-2 border rounded mt-1"
+              placeholder="https://publisher.com"
+            />
+          </label>
+          <label className="block">
+            Copyright
+            <input
+              name="copyright"
+              onChange={handleChange}
+              className="w-full p-2 border rounded mt-1"
+            />
+          </label>
+          <label className="block">
+            Parts Included (if not complete)
+            <input
+              name="partsIncluded"
+              onChange={handleChange}
+              className="w-full p-2 border rounded mt-1"
+            />
+          </label>
+        </section>
+
         {/* SECTION 3: CONTRIBUTORS */}
         <section className="space-y-4 pb-6">
           <h3 className="font-bold text-emerald-700 uppercase tracking-wider border-b pb-1">
@@ -280,12 +327,13 @@ const EditionForm = ({ onSubmit, isLoading }) => {
             4. Textual Features & Content
           </h3>
 
-          <div className="grid grid-cols-2 gap-4 bg-emerald-50 p-4 rounded-lg">
+          <div className="grid grid-cols-2 gap-4 bg-emerald-50 p-4 rounded-lg shadow-inner">
             {[
               "hasOriginalText",
               "hasTranslation",
               "hasFacingTranslation",
               "hasCommentary",
+              "publicDomain",
               "hasApparatus",
               "hasNotes",
               "hasGlossary",
@@ -314,12 +362,12 @@ const EditionForm = ({ onSubmit, isLoading }) => {
             ))}
           </div>
 
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <label className="block">
               Translation Type
               <select
                 name="translationType"
-                value={formData.translationType}
+                value={formData.translationType || ""}
                 onChange={handleChange}
                 className="w-full p-2 border rounded mt-1"
               >
@@ -332,7 +380,7 @@ const EditionForm = ({ onSubmit, isLoading }) => {
               Column Layout
               <select
                 name="columnLayout"
-                value={formData.columnLayout}
+                value={formData.columnLayout || ""}
                 onChange={handleChange}
                 className="w-full p-2 border rounded mt-1"
               >
@@ -341,6 +389,113 @@ const EditionForm = ({ onSubmit, isLoading }) => {
                 <option value="">None</option>
               </select>
             </label>
+            <label className="block">
+              Commentary Type
+              <input
+                name="commentaryType"
+                onChange={handleChange}
+                className="w-full p-2 border rounded mt-1"
+              />
+            </label>
+            <label className="block">
+              Commentary Language
+              <input
+                name="commentaryLanguage"
+                onChange={handleChange}
+                className="w-full p-2 border rounded mt-1"
+              />
+            </label>
+            <label className="block">
+              Commentary Length
+              <select
+                name="commentaryLength"
+                value={formData.commentaryLength || ""}
+                onChange={handleChange}
+                className="w-full p-2 border rounded mt-1"
+              >
+                <option value="brief">Brief</option>
+                <option value="moderate">Moderate</option>
+                <option value="extensive">Extensive</option>
+                <option value="">Not Applicable</option>
+              </select>
+            </label>
+            <label className="block">
+              Apparatus Type
+              <input
+                name="apparatusType"
+                onChange={handleChange}
+                className="w-full p-2 border rounded mt-1"
+              />
+            </label>
+            <label className="block">
+              Apparatus Location
+              <input
+                name="apparatusLocation"
+                onChange={handleChange}
+                className="w-full p-2 border rounded mt-1"
+              />
+            </label>
+            <label className="block">
+              Notes Type
+              <input
+                name="notesType"
+                onChange={handleChange}
+                className="w-full p-2 border rounded mt-1"
+              />
+            </label>
+            <label className="block">
+              Line Numbering Interval
+              <input
+                type="number"
+                name="lineNumberingInterval"
+                onChange={handleChange}
+                className="w-full p-2 border rounded mt-1"
+              />
+            </label>
+          </div>
+
+          <div className="space-y-2">
+            {[
+              "newEditionsDate",
+              "manuscripts",
+              "primaryManuscripts",
+              "translationLanguages",
+              "distinguishingFeatures",
+            ].map((field) => (
+              <div
+                key={field}
+                className="space-y-1 p-3 border rounded-md bg-slate-50"
+              >
+                <span className="font-medium capitalize text-xs text-slate-600">
+                  {field.replace(/([A-Z])/g, " $1")}
+                </span>
+                {formData[field].map((val, i) => (
+                  <div key={i} className="flex gap-1">
+                    <input
+                      value={val}
+                      onChange={(e) =>
+                        handleArrayChange(i, e.target.value, field)
+                      }
+                      className="flex-1 p-1 border rounded"
+                    />
+                    <button
+                      type="button"
+                      onClick={() => removeArrayField(field, i)}
+                      className="text-red-500 px-1"
+                    >
+                      ✕
+                    </button>
+                  </div>
+                ))}
+                <button
+                  type="button"
+                  onClick={() => addArrayField(field)}
+                  className="text-xs text-blue-600 font-bold"
+                >
+                  + Add {field.replace(/([A-Z])/g, " $1").toLowerCase()}
+                </button>
+              </div>
+            ))}
           </div>
         </section>
 
@@ -534,16 +689,27 @@ const EditionForm = ({ onSubmit, isLoading }) => {
             Data Quality Status
             <select
               name="dataQuality"
-              value={formData.dataQuality}
+              value={formData.dataQuality || ""}
               onChange={handleChange}
               className="w-full p-2 border rounded mt-1"
             >
               <option value="high">High</option>
               <option value="medium">Medium</option>
               <option value="low">Low</option>
+              <option value="">Not Set</option>
             </select>
           </label>
         </div>
+      </section>
+
+      {/* JSON PREVIEW SECTION */}
+      <section className="mt-8">
+        <h3 className="font-bold text-gray-700 uppercase tracking-wider mb-2">
+          Data Preview (JSON)
+        </h3>
+        <pre className="bg-gray-900 text-emerald-400 p-4 rounded-lg overflow-x-auto text-xs max-h-60">
+          {JSON.stringify(formData, null, 2)}
+        </pre>
       </section>
 
       <button
