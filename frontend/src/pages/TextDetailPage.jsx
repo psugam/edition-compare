@@ -48,6 +48,13 @@ const EditionCard = ({ edition }) => {
     { label: "Bibliography", value: edition.hasBibliography },
     { label: "Public Domain", value: edition.publicDomain },
     { label: "Open Access", value: edition.openAccess },
+    { label: "Notes", value: edition.hasNotes },
+    { label: "Complete Edition", value: edition.completeEdition },
+    { label: "Illustrations", value: edition.illustrations },
+    { label: "Maps", value: edition.maps },
+    { label: "Line Numbering", value: edition.lineNumbering },
+    { label: "Paragraph Numbering", value: edition.paragraphNumbering },
+    { label: "In Print", value: edition.inPrint },
   ];
 
   return (
@@ -64,16 +71,62 @@ const EditionCard = ({ edition }) => {
         by {edition.editors.join(", ")} ({edition.publishedDate})
       </p>
 
-      <div className="mt-4 grid grid-cols-1 sm:grid-cols-2 gap-x-4 gap-y-2 text-sm">
+      <div className="mt-4 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-x-4 gap-y-2 text-sm">
         <DetailItem label="Publisher" value={edition.publisher} />
+        <DetailItem
+          label="Publisher Link"
+          value={edition.publisherLink}
+          isLink={true}
+        />
         <DetailItem label="ISBN" value={edition.isbn} />
         <DetailItem label="Page Count" value={edition.pageCount} />
+        <DetailItem label="Series" value={edition.seriesName} />
+        <DetailItem label="Series #" value={edition.seriesNumber} />
+        <DetailItem label="Volume" value={edition.volumeNumber} />
+        <DetailItem label="Total Volumes" value={edition.totalVolumes} />
+        <DetailItem label="New Editions" value={edition.newEditionsDate} />
+        <DetailItem label="Translators" value={edition.translators} />
+        <DetailItem label="Contributors" value={edition.contributors} />
+        <DetailItem label="Manuscripts" value={edition.manuscripts} />
+        <DetailItem
+          label="Primary Manuscripts"
+          value={edition.primaryManuscripts}
+        />
+        <DetailItem
+          label="Translation Languages"
+          value={edition.translationLanguages}
+        />
         <DetailItem label="Translation Type" value={edition.translationType} />
+        <DetailItem label="Commentary Type" value={edition.commentaryType} />
+        <DetailItem
+          label="Commentary Language"
+          value={edition.commentaryLanguage}
+        />
         <DetailItem
           label="Commentary Length"
           value={edition.commentaryLength}
         />
+        <DetailItem label="Apparatus Type" value={edition.apparatusType} />
+        <DetailItem
+          label="Apparatus Location"
+          value={edition.apparatusLocation}
+        />
+        <DetailItem label="Notes Type" value={edition.notesType} />
+        <DetailItem label="Parts Included" value={edition.partsIncluded} />
+        <DetailItem
+          label="Line Numbering Interval"
+          value={edition.lineNumberingInterval}
+        />
+        <DetailItem label="Column Layout" value={edition.columnLayout} />
+        <DetailItem label="Copyright" value={edition.copyright} />
         <DetailItem label="License" value={edition.license} />
+        <DetailItem
+          label="Distinguishing Features"
+          value={edition.distinguishingFeatures}
+        />
+        <DetailItem label="Remarks" value={edition.remarks} />
+        <DetailItem label="Data Quality" value={edition.dataQuality} />
+        <DetailItem label="Verified" value={edition.verifiedByAdmin} />
       </div>
 
       <div className="mt-3 pt-3 border-t">
@@ -94,19 +147,52 @@ const EditionCard = ({ edition }) => {
         </div>
       </div>
 
-      {edition.publicDomainResource?.length > 0 &&
-        edition.publicDomainResource[0].link && (
-          <div className="mt-3">
-            <a
-              href={edition.publicDomainResource[0].link}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-sm text-emerald-600 hover:underline font-medium"
-            >
-              View Public Domain Resource
-            </a>
+      {edition.publicDomainResource?.length > 0 && (
+        <div className="mt-3 pt-3 border-t">
+          <h5 className="text-xs font-semibold uppercase text-gray-500 mb-2">
+            Public Domain Resources
+          </h5>
+          {edition.publicDomainResource.map((res, index) => (
+            <div key={index} className="text-sm">
+              <a
+                href={res.link}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-emerald-600 hover:underline"
+              >
+                {res.source}
+              </a>
+            </div>
+          ))}
+        </div>
+      )}
+
+      {edition.reviews?.length > 0 && (
+        <div className="mt-3 pt-3 border-t">
+          <h5 className="text-xs font-semibold uppercase text-gray-500 mb-2">
+            Reviews
+          </h5>
+          <div className="space-y-1">
+            {edition.reviews.map((review, index) => (
+              <div key={index} className="text-sm">
+                <a
+                  href={review.link}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-emerald-600 hover:underline"
+                >
+                  Review by {review.reviewer || "N/A"} for {review.source}
+                </a>
+                {review.date && (
+                  <span className="text-gray-500 text-xs ml-2">
+                    ({review.date})
+                  </span>
+                )}
+              </div>
+            ))}
           </div>
-        )}
+        </div>
+      )}
     </div>
   );
 };
