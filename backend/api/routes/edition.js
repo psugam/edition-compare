@@ -6,13 +6,25 @@ const Edition = require("../database/edition.model");
 
 // --- 1. VIEW ALL ITEMS (GET /api/editions) ---
 router.get("/", async (req, res) => {
+  const { q } = req.query;
+
   try {
-    const editions = await Edition.find({});
+    let editions = [];
+    if (q) {
+      const searchPattern = new RegExp(q, "i");
+      editions = await Edition.find({
+        $or: [
+          { editionId: searchPattern },
+          { textId: searchPattern },
+          { editionTitle: searchPattern },
+        ],
+      }).limit(50); // Limit results for performance
+    }
     res.status(200).json(editions);
   } catch (error) {
     res
       .status(500)
-      .json({ message: "Error fetching all editions", error: error.message });
+      .json({ message: "Error fetching editions", error: error.message });
   }
 });
 
@@ -102,6 +114,29 @@ router.get("/text/:textId", async (req, res) => {
     res
       .status(500)
       .json({ message: "Error deleting edition", error: error.message });
+  }
+});
+
+// 7. delete all the editions for one text
+router.delete("/text/:textId", async (req, res) => {
+  try {
+    const result = await Edition.deleteMany({ textId: req.params.textId });
+    if (result.deletedCount === 0) {
+      return res
+        .status(404)
+        .json({ message: "Edition not found to delete for the given textId." });
+    }
+
+    res.status(200).json({
+      message: `Editions with textID ${req.params.textId} deleted successfully.`,
+    });
+  } catch (error) {
+    res
+      .status(500)
+      .json({
+        message: "Error deleting the editions of the text",
+        error: error.message,
+      });
   }
 });
 

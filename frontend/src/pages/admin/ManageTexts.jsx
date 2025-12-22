@@ -1,46 +1,81 @@
-// src/pages/admin/ManageTexts.jsx
 import React, { useState, useEffect } from "react";
 import api from "../../utils/axiosInstance";
 import { useAuth } from "../../context/AuthContext";
-// ... other components (e.g., EditModal)
+import EditTextForm from "../../components/EditTextForm"; // Import the new form
 
 function ManageTextsPage() {
   const { token } = useAuth();
   const [searchTerm, setSearchTerm] = useState("");
   const [texts, setTexts] = useState([]);
-  const [isEditing, setIsEditing] = useState(null); // Text ID being edited
+  const [editingText, setEditingText] = useState(null); // Will hold the text object to edit
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
+  const [hasSearched, setHasSearched] = useState(false);
 
-  // Fetches all texts (for search/display)
   const fetchTexts = async () => {
-    // NOTE: For security, a real system should have a separate, protected search API
-    // This currently uses the public GET /api/texts route
+    if (!searchTerm) {
+        setTexts([]);
+        setHasSearched(true);
+        return;
+    }
+    setLoading(true);
+    setHasSearched(true);
     try {
-      const response = await api.get(`/api/texts?q=${searchTerm}`);
-      setTexts(response.data);
+      // The API doesn't support a query param, so filtering is done client-side.
+      // A future improvement would be to add search capabilities to the backend.
+      const response = await api.get(`/api/texts`);
+      const q = searchTerm.toLowerCase();
+      const filteredTexts = response.data.filter(t => 
+          (t.textId && t.textId.toLowerCase().includes(q)) || 
+          (t.title && t.title.toLowerCase().includes(q)) ||
+          (t.authors && t.authors.join(', ').toLowerCase().includes(q))
+      );
+      
+      setTexts(filteredTexts);
+      setError(null);
     } catch (error) {
       console.error("Failed to fetch texts:", error);
+      setError("Failed to load texts. Please try again.");
+    } finally {
+        setLoading(false);
     }
   };
 
-  useEffect(() => {
-    fetchTexts();
-  }, []); // Initial load
+  const handleSearch = () => {
+      fetchTexts();
+  }
 
-  const handleDelete = async (textId) => {
-    if (!window.confirm(`Are you sure you want to delete Text ID: ${textId}?`))
+  const handleDelete = async (textId, title) => {
+    if (!window.confirm(`Are you sure you want to delete "${title}" (ID: ${textId})? This is irreversible.`))
       return;
 
     try {
-      await axios.delete(`/api/texts/${textId}`, {
+      await api.delete(`/api/texts/${textId}`, {
         headers: { Authorization: `Bearer ${token}` },
       });
-      fetchTexts(); // Refresh list
+      // Re-fetch the current search results after deletion
+      fetchTexts(); 
     } catch (error) {
-      alert(
-        `Deletion failed. Error: ${
-          error.response?.data?.message || "Server error"
-        }`
-      );
+        const errorMessage = error.response?.data?.message || "Server error";
+        alert(`Deletion failed. Error: ${errorMessage}`);
+        console.error("Deletion error:", error);
+    }
+  };
+
+  const handleUpdate = async (formData) => {
+    setLoading(true);
+    try {
+        await api.put(`/api/texts/${formData.textId}`, formData, {
+            headers: { Authorization: `Bearer ${token}` },
+        });
+        setEditingText(null); // Close modal
+        fetchTexts(); // Refresh list with current search
+    } catch (error) {
+        const errorMessage = error.response?.data?.message || "Server error";
+        alert(`Update failed. Error: ${errorMessage}`);
+        console.error("Update error:", error);
+    } finally {
+        setLoading(false);
     }
   };
 
@@ -50,58 +85,80 @@ function ManageTextsPage() {
       <div className="mb-4 flex">
         <input
           type="text"
-          placeholder="Search by title or ID..."
+          placeholder="Search by title, ID, or author..."
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
+          onKeyDown={(e) => { if (e.key === 'Enter') handleSearch(); }}
           className="flex-grow p-2 border rounded-l"
         />
         <button
-          onClick={fetchTexts}
-          className="bg-indigo-600 text-white p-2 rounded-r hover:bg-indigo-700"
+          onClick={handleSearch}
+          className="bg-indigo-600 text-white px-6 py-2 rounded-r hover:bg-indigo-700"
         >
-          Search
+          {loading ? 'Searching...' : 'Search'}
         </button>
       </div>
 
-      <table className="min-w-full bg-white border">
-        <thead>
-          <tr>
-            <th>ID</th>
-            <th>Title</th>
-            <th>Author</th>
-            <th>Actions</th>
-          </tr>
-        </thead>
-        <tbody>
-          {texts.map((text) => (
-            <tr key={text.textId}>
-              <td>{text.textId}</td>
-              <td>{text.title}</td>
-              <td>{text.authors.join(", ")}</td>
-              <td>
-                <button
-                  onClick={() => setIsEditing(text.textId)}
-                  className="text-blue-500 mr-2"
-                >
-                  Edit
-                </button>
-                <button
-                  onClick={() => handleDelete(text.textId)}
-                  className="text-red-500"
-                >
-                  Delete
-                </button>
-              </td>
+      {error && <p className="text-red-500 py-4">{error}</p>}
+      
+      <div className="overflow-x-auto shadow-lg rounded-lg">
+        <table className="min-w-full bg-white border">
+            <thead className="bg-gray-100">
+            <tr className="text-left">
+                <th className="p-3">ID</th>
+                <th className="p-3">Title</th>
+                <th className="p-3">Author(s)</th>
+                <th className="p-3">Actions</th>
             </tr>
-          ))}
-        </tbody>
-      </table>
+            </thead>
+            <tbody>
+            {loading && (
+                <tr>
+                    <td colSpan="4" className="text-center p-4">Loading...</td>
+                </tr>
+            )}
+            {!loading && hasSearched && texts.length === 0 && (
+                <tr>
+                    <td colSpan="4" className="text-center p-4 text-gray-500">No texts found matching your search.</td>
+                </tr>
+            )}
+            {!loading && !hasSearched && (
+                <tr>
+                    <td colSpan="4" className="text-center p-4 text-gray-500">Please enter a search term and click Search to begin.</td>
+                </tr>
+            )}
+            {!loading && texts.map((text) => (
+                <tr key={text.textId} className="border-t hover:bg-gray-50">
+                <td className="p-3 font-mono text-sm">{text.textId}</td>
+                <td className="p-3 font-semibold">{text.title}</td>
+                <td className="p-3 italic text-gray-600">{text.authors ? text.authors.join(", ") : 'N/A'}</td>
+                <td className="p-3">
+                    <button
+                        onClick={() => setEditingText(text)}
+                        className="bg-blue-500 text-white px-3 py-1 rounded-md text-sm font-bold hover:bg-blue-600 mr-2"
+                    >
+                    Edit
+                    </button>
+                    <button
+                        onClick={() => handleDelete(text.textId, text.title)}
+                        className="bg-red-500 text-white px-3 py-1 rounded-md text-sm font-bold hover:bg-red-600"
+                    >
+                    Delete
+                    </button>
+                </td>
+                </tr>
+            ))}
+            </tbody>
+        </table>
+      </div>
 
-      {/* Edit Modal Placeholder */}
-      {isEditing && (
-        <p className="mt-4 p-3 bg-yellow-100">
-          Editing Text ID: {isEditing} (Modal component would go here)
-        </p>
+      {editingText && (
+        <EditTextForm 
+            initialData={editingText}
+            onSubmit={handleUpdate}
+            onCancel={() => setEditingText(null)}
+            isLoading={loading}
+        />
       )}
     </div>
   );

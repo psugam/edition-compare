@@ -1,5 +1,6 @@
 // src/context/AuthContext.jsx (Revised)
 import React, { createContext, useContext, useState, useEffect } from "react";
+import api from "../utils/axiosInstance";
 
 const AuthContext = createContext();
 
@@ -7,7 +8,12 @@ const AuthContext = createContext();
 const getInitialAuthState = () => {
   try {
     const storedAuth = localStorage.getItem("userAuth");
-    return storedAuth ? JSON.parse(storedAuth) : { user: null, token: null };
+    if (storedAuth) {
+        const auth = JSON.parse(storedAuth);
+        // Here you could also check for token expiry if you were using a JWT library
+        return auth;
+    }
+    return { user: null, token: null };
   } catch (e) {
     console.error("Could not parse auth state from localStorage:", e);
     return { user: null, token: null };
@@ -23,32 +29,48 @@ export const AuthProvider = ({ children }) => {
   useEffect(() => {
     if (authState.token) {
       localStorage.setItem("userAuth", JSON.stringify(authState));
+      api.defaults.headers.common['Authorization'] = `Bearer ${authState.token}`;
     } else {
       // Clear storage if we log out or the state is cleared
       localStorage.removeItem("userAuth");
+      delete api.defaults.headers.common['Authorization'];
     }
   }, [authState]);
 
   const login = (data) => {
     const { token, id, username, role, email } = data;
-
     const userData = { id, username, role, email };
-
-    setAuthState({
-      user: userData,
-      token: token,
-    });
-
-    // **USE THE setPopup HELPER HERE**
+    setAuthState({ user: userData, token: token });
     setPopup(`Welcome back, ${userData.username}!`, "success");
   };
 
-  const logout = () => {
+  const logout = (message = "You have been logged out.") => {
     setAuthState({ user: null, token: null });
-
-    // **USE THE setPopup HELPER HERE**
-    setPopup("You have been logged out.", "success");
+    setPopup(message, "success");
+    // Forcing a redirect to login. This will also clear any component state.
+    if (window.location.pathname !== '/login') {
+        window.location.href = '/login';
+    }
   };
+
+  // This effect sets up the Axios interceptor
+  useEffect(() => {
+    const interceptor = api.interceptors.response.use(
+      (response) => response,
+      (error) => {
+        // Check if the error is a 401, and that we have a token in state (meaning user should be logged in)
+        if (error.response?.status === 401 && authState.token) {
+          logout("Your session has expired. Please log in again.");
+        }
+        return Promise.reject(error);
+      }
+    );
+
+    // Cleanup function to remove the interceptor when the provider unmounts
+    return () => {
+      api.interceptors.response.eject(interceptor);
+    };
+  }, [authState.token]); // Rerun if token changes
 
   // Function to set the temporary notification (for redirect messages)
   const setPopup = (message, type = "error", duration = 5000) => {

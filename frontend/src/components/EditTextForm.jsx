@@ -1,56 +1,89 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 
-const TextForm = ({ onSubmit, isLoading }) => {
-  const [formData, setFormData] = useState({
+const emptyState = {
     textId: "",
     title: "",
     titleOriginal: "",
     titleTransliteration: "",
-    alternativeTitles: [""],
-    authors: [""],
-    authorsOriginal: [""],
-    attributedAuthors: [""],
+    alternativeTitles: [],
+    authors: [],
+    authorsOriginal: [],
+    attributedAuthors: [],
     originalLanguage: "",
     languageCode: "",
     dialect: "",
     date: "",
-    dateNumeric: "",
+    dateNumeric: null,
     dateUncertainty: "low",
     genre: "",
-    subgenre: [""],
+    subgenre: [],
     literaryPeriod: "",
-    structure: { books: "", lines: "", verses: "", chapters: "", cantos: "" },
+    structure: { books: null, lines: null, verses: null, chapters: null, cantos: null },
     meter: "",
     description: "",
-    tags: [""],
+    tags: [],
     manuscriptTradition: {
       oldestManuscript: "",
       oldestManuscriptDate: "",
       numberOfManuscripts: "",
       textualTransmission: "",
     },
-    firstPrintedEdition: { year: "", location: "", editor: "" },
-    relatedTexts: [""],
+    firstPrintedEdition: { year: null, location: "", editor: "" },
+    relatedTexts: [],
     partOfSeries: "",
     wikiLink: "",
-    externalLinks: [{ name: "", url: "", type: "text" }],
+    externalLinks: [],
     verifiedByAdmin: false,
     dataQuality: "medium",
-  });
+};
+
+
+const EditTextForm = ({ onSubmit, isLoading, initialData, onCancel }) => {
+  const [formData, setFormData] = useState(emptyState);
+
+  useEffect(() => {
+    if (initialData) {
+        // Deep merge to ensure all keys from emptyState are present
+        const mergedData = {
+            ...emptyState,
+            ...initialData,
+            structure: { ...emptyState.structure, ...(initialData.structure || {}) },
+            manuscriptTradition: { ...emptyState.manuscriptTradition, ...(initialData.manuscriptTradition || {}) },
+            firstPrintedEdition: { ...emptyState.firstPrintedEdition, ...(initialData.firstPrintedEdition || {}) },
+            // Ensure arrays are not null
+            alternativeTitles: initialData.alternativeTitles || [],
+            authors: initialData.authors || [],
+            authorsOriginal: initialData.authorsOriginal || [],
+            attributedAuthors: initialData.attributedAuthors || [],
+            subgenre: initialData.subgenre || [],
+            tags: initialData.tags || [],
+            relatedTexts: initialData.relatedTexts || [],
+            externalLinks: initialData.externalLinks || [],
+        };
+      setFormData(mergedData);
+    }
+  }, [initialData]);
+
 
   // --- Handlers ---
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
+    let finalValue = type === "checkbox" ? checked : value;
+
     if (name.includes(".")) {
       const [parent, child] = name.split(".");
+       // Handle cases where value is empty string for number fields
+      if ((child === 'year' || child === 'dateNumeric' || Object.keys(emptyState.structure).includes(child)) && finalValue === '') {
+        finalValue = null;
+      }
       setFormData((prev) => ({
         ...prev,
-        [parent]: { ...prev[parent], [child]: value },
+        [parent]: { ...prev[parent], [child]: finalValue },
       }));
     } else {
       setFormData((prev) => ({
         ...prev,
-        [name]: type === "checkbox" ? checked : value,
+        [name]: finalValue,
       }));
     }
   };
@@ -69,7 +102,7 @@ const TextForm = ({ onSubmit, isLoading }) => {
 
   const addField = (field, isObj = false, template = "") => {
     const newVal = isObj ? { ...template } : "";
-    setFormData({ ...formData, [field]: [...formData[field], newVal] });
+    setFormData({ ...formData, [field]: [...(formData[field] || []), newVal] });
   };
 
   const removeField = (field, index) => {
@@ -80,13 +113,19 @@ const TextForm = ({ onSubmit, isLoading }) => {
   };
 
   return (
+    <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
     <form
       onSubmit={(e) => {
         e.preventDefault();
         onSubmit(formData);
       }}
-      className="max-w-5xl mx-auto p-6 space-y-12 bg-white text-gray-800"
+      className="max-w-5xl w-full mx-auto p-6 space-y-8 bg-white text-gray-800 rounded-lg shadow-2xl overflow-y-auto max-h-[90vh]"
     >
+      <div className="flex justify-between items-center border-b pb-4">
+        <h1 className="text-2xl font-bold text-indigo-800">Edit Text: <span className="font-mono">{formData.textId}</span></h1>
+        <button type="button" onClick={onCancel} className="text-2xl text-gray-500 hover:text-gray-800">&times;</button>
+      </div>
+
       {/* 1. TITLES & IDENTITY */}
       <div className="border-l-4 border-indigo-600 pl-4 space-y-4">
         <h2 className="text-xl font-bold text-indigo-800 uppercase tracking-tighter">
@@ -99,8 +138,8 @@ const TextForm = ({ onSubmit, isLoading }) => {
               name="textId"
               required
               value={formData.textId}
-              onChange={handleChange}
-              className="w-full p-2 border rounded"
+              readOnly
+              className="w-full p-2 border rounded bg-gray-100"
             />
           </label>
           <label>
@@ -127,7 +166,7 @@ const TextForm = ({ onSubmit, isLoading }) => {
             Transliteration{" "}
             <input
               name="titleTransliteration"
-              value={formData.titleTransliteration}
+              value={formData.titleTransliteration || ''}
               onChange={handleChange}
               className="w-full p-2 border rounded"
             />
@@ -136,7 +175,7 @@ const TextForm = ({ onSubmit, isLoading }) => {
             Wiki Link{" "}
             <input
               name="wikiLink"
-              value={formData.wikiLink}
+              value={formData.wikiLink || ''}
               onChange={handleChange}
               className="w-full p-2 border rounded"
             />
@@ -145,7 +184,7 @@ const TextForm = ({ onSubmit, isLoading }) => {
 
         <div>
           <span className="block font-medium mb-1">Alternative Titles</span>
-          {formData.alternativeTitles.map((val, i) => (
+          {(formData.alternativeTitles || []).map((val, i) => (
             <div key={i} className="flex gap-2 mb-2">
               <input
                 value={val}
@@ -184,7 +223,7 @@ const TextForm = ({ onSubmit, isLoading }) => {
               <span className="block font-medium capitalize mb-1">
                 {field.replace(/([A-Z])/g, " $1")}
               </span>
-              {formData[field].map((val, i) => (
+              {(formData[field] || []).map((val, i) => (
                 <div key={i} className="flex gap-2 mb-2">
                   <input
                     value={val}
@@ -218,6 +257,7 @@ const TextForm = ({ onSubmit, isLoading }) => {
             <input
               name="originalLanguage"
               required
+              value={formData.originalLanguage}
               onChange={handleChange}
               className="w-full p-2 border rounded"
             />
@@ -227,6 +267,7 @@ const TextForm = ({ onSubmit, isLoading }) => {
             <input
               name="languageCode"
               required
+              value={formData.languageCode}
               onChange={handleChange}
               className="w-full p-2 border rounded"
             />
@@ -235,6 +276,7 @@ const TextForm = ({ onSubmit, isLoading }) => {
             Dialect{" "}
             <input
               name="dialect"
+              value={formData.dialect || ''}
               onChange={handleChange}
               className="w-full p-2 border rounded"
             />
@@ -244,13 +286,14 @@ const TextForm = ({ onSubmit, isLoading }) => {
             <input
               name="genre"
               required
+              value={formData.genre}
               onChange={handleChange}
               className="w-full p-2 border rounded"
             />
           </label>
           <div>
             <span className="block font-medium mb-1">Subgenre</span>
-            {formData.subgenre.map((val, i) => (
+            {(formData.subgenre || []).map((val, i) => (
               <div key={i} className="flex gap-2 mb-2">
                 <input
                   value={val}
@@ -280,6 +323,7 @@ const TextForm = ({ onSubmit, isLoading }) => {
             Period{" "}
             <input
               name="literaryPeriod"
+              value={formData.literaryPeriod || ''}
               onChange={handleChange}
               className="w-full p-2 border rounded"
             />
@@ -288,6 +332,7 @@ const TextForm = ({ onSubmit, isLoading }) => {
             Series{" "}
             <input
               name="partOfSeries"
+              value={formData.partOfSeries || ''}
               onChange={handleChange}
               className="w-full p-2 border rounded"
             />
@@ -306,6 +351,7 @@ const TextForm = ({ onSubmit, isLoading }) => {
             <input
               name="date"
               required
+              value={formData.date}
               onChange={handleChange}
               placeholder="e.g. 1st Century BC"
               className="w-full p-2 border rounded"
@@ -316,6 +362,7 @@ const TextForm = ({ onSubmit, isLoading }) => {
             <input
               type="number"
               name="dateNumeric"
+              value={formData.dateNumeric || ''}
               onChange={handleChange}
               className="w-full p-2 border rounded"
             />
@@ -324,7 +371,7 @@ const TextForm = ({ onSubmit, isLoading }) => {
             Date Uncertainty
             <select
               name="dateUncertainty"
-              value={formData.dateUncertainty}
+              value={formData.dateUncertainty || 'low'}
               onChange={handleChange}
               className="w-full p-2 border rounded"
             >
@@ -342,6 +389,7 @@ const TextForm = ({ onSubmit, isLoading }) => {
               <input
                 type="number"
                 name={`structure.${unit}`}
+                value={formData.structure[unit] || ''}
                 onChange={handleChange}
                 className="w-full p-2 border rounded"
               />
@@ -352,13 +400,14 @@ const TextForm = ({ onSubmit, isLoading }) => {
           Metrical Form{" "}
           <input
             name="meter"
+            value={formData.meter || ''}
             onChange={handleChange}
             className="w-full p-2 border rounded"
           />
         </label>
       </div>
 
-      {/* 4. TAGS and RELATED TEXTS */}
+       {/* 4. TAGS and RELATED TEXTS */}
       <div className="border-l-4 border-teal-600 pl-4 space-y-4">
         <h2 className="text-xl font-bold text-teal-800 uppercase tracking-tighter">
           IV. Tags & Relations
@@ -366,7 +415,7 @@ const TextForm = ({ onSubmit, isLoading }) => {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
             <div>
                 <span className="block font-medium mb-1">Tags</span>
-                {formData.tags.map((val, i) => (
+                {(formData.tags || []).map((val, i) => (
                 <div key={i} className="flex gap-2 mb-2">
                     <input
                     value={val}
@@ -394,7 +443,7 @@ const TextForm = ({ onSubmit, isLoading }) => {
             </div>
             <div>
                 <span className="block font-medium mb-1">Related Text IDs</span>
-                {formData.relatedTexts.map((val, i) => (
+                {(formData.relatedTexts || []).map((val, i) => (
                 <div key={i} className="flex gap-2 mb-2">
                     <input
                     value={val}
@@ -435,6 +484,7 @@ const TextForm = ({ onSubmit, isLoading }) => {
               Oldest MS{" "}
               <input
                 name="manuscriptTradition.oldestManuscript"
+                value={formData.manuscriptTradition.oldestManuscript || ''}
                 onChange={handleChange}
                 className="w-full p-2 border rounded mt-1"
               />
@@ -443,6 +493,7 @@ const TextForm = ({ onSubmit, isLoading }) => {
               Oldest Date{" "}
               <input
                 name="manuscriptTradition.oldestManuscriptDate"
+                value={formData.manuscriptTradition.oldestManuscriptDate || ''}
                 onChange={handleChange}
                 className="w-full p-2 border rounded mt-1"
               />
@@ -451,6 +502,7 @@ const TextForm = ({ onSubmit, isLoading }) => {
               # of Manuscripts{" "}
               <input
                 name="manuscriptTradition.numberOfManuscripts"
+                value={formData.manuscriptTradition.numberOfManuscripts || ''}
                 onChange={handleChange}
                 className="w-full p-2 border rounded mt-1"
               />
@@ -459,6 +511,7 @@ const TextForm = ({ onSubmit, isLoading }) => {
               Transmission Info{" "}
               <textarea
                 name="manuscriptTradition.textualTransmission"
+                value={formData.manuscriptTradition.textualTransmission || ''}
                 onChange={handleChange}
                 className="w-full p-2 border rounded mt-1"
               />
@@ -471,6 +524,7 @@ const TextForm = ({ onSubmit, isLoading }) => {
               <input
                 type="number"
                 name="firstPrintedEdition.year"
+                value={formData.firstPrintedEdition.year || ''}
                 onChange={handleChange}
                 className="w-full p-2 border rounded mt-1"
               />
@@ -479,6 +533,7 @@ const TextForm = ({ onSubmit, isLoading }) => {
               Location{" "}
               <input
                 name="firstPrintedEdition.location"
+                value={formData.firstPrintedEdition.location || ''}
                 onChange={handleChange}
                 className="w-full p-2 border rounded mt-1"
               />
@@ -487,6 +542,7 @@ const TextForm = ({ onSubmit, isLoading }) => {
               Editor{" "}
               <input
                 name="firstPrintedEdition.editor"
+                value={formData.firstPrintedEdition.editor || ''}
                 onChange={handleChange}
                 className="w-full p-2 border rounded mt-1"
               />
@@ -498,6 +554,7 @@ const TextForm = ({ onSubmit, isLoading }) => {
           Description{" "}
           <textarea
             name="description"
+            value={formData.description || ''}
             onChange={handleChange}
             className="w-full p-2 border rounded h-32"
           />
@@ -506,7 +563,7 @@ const TextForm = ({ onSubmit, isLoading }) => {
         {/* EXTERNAL LINKS (Object Array) */}
         <div>
           <span className="block font-medium mb-1">External Links</span>
-          {formData.externalLinks.map((link, i) => (
+          {(formData.externalLinks || []).map((link, i) => (
             <div key={i} className="flex gap-2 mb-2 bg-gray-50 p-2 rounded">
               <input
                 placeholder="Name"
@@ -586,7 +643,7 @@ const TextForm = ({ onSubmit, isLoading }) => {
             Data Quality
             <select
               name="dataQuality"
-              value={formData.dataQuality}
+              value={formData.dataQuality || 'medium'}
               onChange={handleChange}
               className="ml-2 p-2 border rounded"
             >
@@ -598,6 +655,7 @@ const TextForm = ({ onSubmit, isLoading }) => {
         </div>
       </div>
 
+
       {/* JSON PREVIEW SECTION */}
       <section className="mt-8">
         <h3 className="font-bold text-gray-700 uppercase tracking-wider mb-2">
@@ -608,15 +666,25 @@ const TextForm = ({ onSubmit, isLoading }) => {
         </pre>
       </section>
 
-      <button
-        type="submit"
-        disabled={isLoading}
-        className="w-full bg-indigo-700 text-white py-5 rounded-xl font-black text-xl hover:bg-indigo-800 shadow-xl transition-all uppercase"
-      >
-        {isLoading ? "Saving to Archive..." : "Create Work Entry"}
-      </button>
+      <div className="flex gap-4">
+        <button
+            type="button"
+            onClick={onCancel}
+            className="w-1/3 bg-gray-500 text-white py-3 rounded-xl font-bold text-lg hover:bg-gray-600"
+        >
+            Cancel
+        </button>
+        <button
+            type="submit"
+            disabled={isLoading}
+            className="w-2/3 bg-indigo-700 text-white py-3 rounded-xl font-bold text-lg hover:bg-indigo-800 shadow-xl transition-all uppercase"
+        >
+            {isLoading ? "Updating in Archive..." : "Update Work Entry"}
+        </button>
+      </div>
     </form>
+    </div>
   );
 };
 
-export default TextForm;
+export default EditTextForm;

@@ -439,7 +439,7 @@ const TextDetailPage = () => {
                 {text.relatedTexts.map((id) => (
                   <Link
                     key={id}
-                    to={`/texts/${id}`}
+                    to={`/text/${id}`}
                     className="text-emerald-600 hover:underline"
                   >
                     {id}
