@@ -4,3 +4,5 @@ backend/node_modules
 .env
 frontend/.env
 backend/.env
+edition-template.json
+text-template.json

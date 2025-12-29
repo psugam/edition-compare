@@ -21,17 +21,11 @@ function ManageTextsPage() {
     setLoading(true);
     setHasSearched(true);
     try {
-      // The API doesn't support a query param, so filtering is done client-side.
-      // A future improvement would be to add search capabilities to the backend.
-      const response = await api.get(`/api/texts`);
-      const q = searchTerm.toLowerCase();
-      const filteredTexts = response.data.filter(t => 
-          (t.textId && t.textId.toLowerCase().includes(q)) || 
-          (t.title && t.title.toLowerCase().includes(q)) ||
-          (t.authors && t.authors.join(', ').toLowerCase().includes(q))
-      );
+      // The backend now supports searching via a query parameter 'q'
+      const response = await api.get(`/api/texts?q=${searchTerm}`);
       
-      setTexts(filteredTexts);
+      // The API returns an object with a 'texts' property
+      setTexts(response.data.texts);
       setError(null);
     } catch (error) {
       console.error("Failed to fetch texts:", error);
