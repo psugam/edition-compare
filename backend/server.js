@@ -28,9 +28,9 @@ async function startServer() {
     app.use("/api/editions", editionRoutes);
     app.use("/api/users", userRoutes);
 
-    app.listen(port, () => {
-      console.log(`Example app listening on port ${port}`);
-    });
+    // app.listen(port, () => {
+    //   console.log(`Example app listening on port ${port}`);
+    // });
   } catch (error) {
     console.error("Failed to start server:", error);
     process.exit(1);
