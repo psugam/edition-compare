@@ -21,20 +21,16 @@ app.get("/", (req, res) => {
   res.send(`Hello. The port is ${port}`);
 });
 
-async function startServer() {
-  try {
-    await connectDB();
-    app.use("/api/texts", textRoutes);
-    app.use("/api/editions", editionRoutes);
-    app.use("/api/users", userRoutes);
+connectDB();
 
-    // app.listen(port, () => {
-    //   console.log(`Example app listening on port ${port}`);
-    // });
-  } catch (error) {
-    console.error("Failed to start server:", error);
-    process.exit(1);
-  }
+app.use("/api/texts", textRoutes);
+app.use("/api/editions", editionRoutes);
+app.use("/api/users", userRoutes);
+
+module.exports = app;
+
+if (require.main === module) {
+  app.listen(port, () => {
+    console.log(`Example app listening on port ${port}`);
+  });
 }
-
-startServer();
