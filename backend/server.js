@@ -35,7 +35,7 @@ if (process.env.NODE_ENV === "production") {
   const buildPath = path.join(__dirname, "../frontend/dist"); // Check if this is 'dist' or 'build'
   app.use(express.static(buildPath));
 
-  app.get("*splat", (req, res) => {
+  app.use((req, res) => {
     res.sendFile(path.join(buildPath, "index.html"));
   });
 } else {
