@@ -4,6 +4,7 @@ const cors = require("cors");
 const dotenv = require("dotenv");
 dotenv.config();
 const path = require("path");
+const fs = require("fs");
 const connectDB = require("./api/database/connect");
 
 // routes
@@ -31,8 +32,9 @@ app.use("/api/editions", editionRoutes);
 app.use("/api/users", userRoutes);
 
 // Serve frontend static files and handle SPA fallback
-if (process.env.NODE_ENV === "production") {
-  const buildPath = path.join(__dirname, "../frontend/dist"); // Check if this is 'dist' or 'build'
+const buildPath = path.join(__dirname, "../frontend/dist");
+
+if (process.env.NODE_ENV === "production" && fs.existsSync(buildPath)) {
   app.use(express.static(buildPath));
 
   app.use((req, res) => {
